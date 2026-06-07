@@ -293,9 +293,26 @@
           <div class="setup-field"><label>Your first name</label><input type="text" id="s-name" placeholder="e.g. Sarah"></div>
           <div class="setup-field"><label>Practice name <span class="opt">(optional)</span></label><input type="text" id="s-practice" placeholder="e.g. Bloom Therapy"></div>
           <div class="setup-field"><label>How you sign off emails</label><input type="text" id="s-signoff" placeholder="e.g. Warm wishes, Sarah  /  With care, Sarah  /  Kind regards, Sarah"></div>
-          <div class="setup-field"><label>Professional body <span class=\"opt\">(optional)</span></label><select id="s-profbody"><option value="">Not listed / prefer not to say</option><option value="BACP member">BACP member</option><option value="BACP Accredited member">BACP Accredited member</option><option value="BACP Senior Accredited member">BACP Senior Accredited member</option><option value="UKCP registered">UKCP registered</option><option value="BPS member">BPS member</option><option value="COSCA member">COSCA member</option><option value="NCS member">NCS member</option><option value="BABCP member">BABCP member</option></select></div>
-          <div class="setup-field"><label>Membership number <span class=\"opt\">(optional)</span></label><input type="text" id="s-regnum" placeholder="e.g. 123456"></div>
-          <div class="setup-field"><label>Working under clinical supervision?</label><select id="s-supervised"><option value="yes">Yes — working under regular clinical supervision</option><option value="no">No — fully qualified and independent</option></select></div>
+          <div class="setup-field"><label>Professional body <span class="opt">(optional)</span></label>
+            <select id="s-profbody">
+              <option value="">Not listed / prefer not to say</option>
+              <option value="BACP member">BACP member</option>
+              <option value="BACP Accredited member">BACP Accredited member</option>
+              <option value="BACP Senior Accredited member">BACP Senior Accredited member</option>
+              <option value="UKCP registered">UKCP registered</option>
+              <option value="BPS member">BPS member</option>
+              <option value="COSCA member">COSCA member</option>
+              <option value="NCS member">NCS member</option>
+              <option value="BABCP member">BABCP member</option>
+            </select>
+          </div>
+          <div class="setup-field"><label>Registration / membership number <span class="opt">(optional)</span></label><input type="text" id="s-regnum" placeholder="e.g. 123456"></div>
+          <div class="setup-field"><label>Are you currently working under clinical supervision?</label>
+            <select id="s-supervised">
+              <option value="yes">Yes — I work under regular clinical supervision</option>
+              <option value="no">No — I am fully qualified and independent</option>
+            </select>
+          </div>
         </div>
       </div>
 
@@ -327,8 +344,22 @@
               <option value="no">No — I go straight to a first session</option>
             </select>
           </div>
-          <div class="setup-field"><label>Session frequency</label><select id="s-frequency"><option value="weekly">Weekly</option><option value="fortnightly">Fortnightly</option><option value="monthly">Monthly</option><option value="flexible — depending on what the client needs">Flexible — client-led</option></select></div>
-          <div class="setup-field"><label>Between-session contact</label><select id="s-contact"><option value="clients may email me between sessions">Clients may email freely</option><option value="clients may email between sessions for brief admin queries only">Email for admin queries only</option><option value="contact between sessions is discouraged except in emergencies">Discouraged except emergencies</option><option value="I do not accept contact between sessions">No contact between sessions</option></select></div>
+          <div class="setup-field"><label>Session frequency</label>
+            <select id="s-frequency">
+              <option value="weekly">Weekly</option>
+              <option value="fortnightly">Fortnightly</option>
+              <option value="monthly">Monthly</option>
+              <option value="flexible — depending on what the client needs">Flexible — client-led</option>
+            </select>
+          </div>
+          <div class="setup-field"><label>Between-session contact</label>
+            <select id="s-contact">
+              <option value="clients may email me between sessions">Clients may email freely</option>
+              <option value="clients may email between sessions for brief admin queries only">Email for admin queries only</option>
+              <option value="contact between sessions is discouraged except in emergencies">Discouraged except emergencies</option>
+              <option value="I do not accept contact between sessions">No contact between sessions</option>
+            </select>
+          </div>
         </div>
       </div>
 
@@ -501,10 +532,10 @@
         <div class="field"><label>What did they enquire about?</label><input type="text" id="avail-issue" placeholder="e.g. anxiety, relationship difficulties"></div>
         <div class="field"><label>Available days/times <span class="optional">(pre-filled from profile)</span></label><input type="text" id="avail-times" placeholder="e.g. Tuesdays 10am–2pm"></div>
         <div class="field"><label>Fee <span class="optional">(pre-filled from profile)</span></label><input type="text" id="avail-fee" placeholder="e.g. £85 per session"></div>
-        <div class="field"><label>Is this their first experience of therapy?</label><select id="avail-firsttime"><option value="unknown">Not sure / not mentioned</option><option value="yes">Yes — first time in therapy</option><option value="no">No — they've been in therapy before</option></select></div>
+              <div class="field"><label>Is this their first experience of therapy?</label><select id="avail-firsttime"><option value="unknown">Not sure / not mentioned</option><option value="yes">Yes — first time in therapy</option><option value="no">No — they have been in therapy before</option></select></div>
       <div class="field"><label>Tone</label><div class="tone-options" id="tone-avail"><button class="tone-btn selected" onclick="selectTone('avail','warm')">Warm & welcoming</button><button class="tone-btn" onclick="selectTone('avail','professional')">Professional</button><button class="tone-btn" onclick="selectTone('avail','concise')">Brief & clear</button></div></div>
       </div>
-      <div class="field" style="margin-top:0.5rem"><label style="display:flex;align-items:center;gap:0.5rem;font-size:0.82rem;color:var(--muted);font-weight:400"><input type="checkbox" id="subj-available" style="width:auto;accent-color:var(--rust)"> Include subject line</label></div>
+            <div class="field" style="margin-top:0.5rem"><label style="display:flex;align-items:center;gap:0.5rem;font-size:0.82rem;color:var(--muted);font-weight:400"><input type="checkbox" id="subj-available" style="width:auto;accent-color:var(--rust)"> Include subject line suggestion</label></div>
       <button class="btn-generate" onclick="generate('available')"><span id="btn-available-text">Generate email</span><span id="btn-available-spin" class="spinner" style="display:none"></span></button>
       <div class="output-section" id="out-available"><div class="output-label">Your personalised email</div><div class="output-box" id="outbox-available"></div><div class="output-actions"><button class="btn-copy" onclick="copyOutput('available')">Copy to clipboard</button><button class="btn-regen" onclick="generate('available')">Regenerate</button><span class="copy-confirm" id="copied-available">✓ Copied!</span></div></div>
     </div>
@@ -519,7 +550,7 @@
         <div class="field"><label>Resources to signpost <span class="optional">(optional)</span></label><input type="text" id="noavail-signpost" placeholder="e.g. BACP directory, Psychology Today"></div>
         <div class="field"><label>Tone</label><div class="tone-options" id="tone-noavail"><button class="tone-btn selected" onclick="selectTone('noavail','warm')">Warm & caring</button><button class="tone-btn" onclick="selectTone('noavail','professional')">Professional</button><button class="tone-btn" onclick="selectTone('noavail','brief')">Brief</button></div></div>
       </div>
-      <div class="field" style="margin-top:0.5rem"><label style="display:flex;align-items:center;gap:0.5rem;font-size:0.82rem;color:var(--muted);font-weight:400"><input type="checkbox" id="subj-noavail" style="width:auto;accent-color:var(--rust)"> Include subject line</label></div>
+            <div class="field" style="margin-top:0.5rem"><label style="display:flex;align-items:center;gap:0.5rem;font-size:0.82rem;color:var(--muted);font-weight:400"><input type="checkbox" id="subj-noavail" style="width:auto;accent-color:var(--rust)"> Include subject line suggestion</label></div>
       <button class="btn-generate" onclick="generate('noavail')"><span id="btn-noavail-text">Generate email</span><span id="btn-noavail-spin" class="spinner" style="display:none"></span></button>
       <div class="output-section" id="out-noavail"><div class="output-label">Your personalised email</div><div class="output-box" id="outbox-noavail"></div><div class="output-actions"><button class="btn-copy" onclick="copyOutput('noavail')">Copy to clipboard</button><button class="btn-regen" onclick="generate('noavail')">Regenerate</button><span class="copy-confirm" id="copied-noavail">✓ Copied!</span></div></div>
     </div>
@@ -533,7 +564,7 @@
         <div class="field"><label>What they're seeking help with <span class="optional">(optional)</span></label><input type="text" id="wait-issue" placeholder="e.g. grief, burnout"></div>
         <div class="field"><label>Tone</label><div class="tone-options" id="tone-wait"><button class="tone-btn selected" onclick="selectTone('wait','warm')">Warm & hopeful</button><button class="tone-btn" onclick="selectTone('wait','professional')">Professional</button></div></div>
       </div>
-      <div class="field" style="margin-top:0.5rem"><label style="display:flex;align-items:center;gap:0.5rem;font-size:0.82rem;color:var(--muted);font-weight:400"><input type="checkbox" id="subj-waitlist" style="width:auto;accent-color:var(--rust)"> Include subject line</label></div>
+            <div class="field" style="margin-top:0.5rem"><label style="display:flex;align-items:center;gap:0.5rem;font-size:0.82rem;color:var(--muted);font-weight:400"><input type="checkbox" id="subj-waitlist" style="width:auto;accent-color:var(--rust)"> Include subject line suggestion</label></div>
       <button class="btn-generate" onclick="generate('waitlist')"><span id="btn-waitlist-text">Generate email</span><span id="btn-waitlist-spin" class="spinner" style="display:none"></span></button>
       <div class="output-section" id="out-waitlist"><div class="output-label">Your personalised email</div><div class="output-box" id="outbox-waitlist"></div><div class="output-actions"><button class="btn-copy" onclick="copyOutput('waitlist')">Copy to clipboard</button><button class="btn-regen" onclick="generate('waitlist')">Regenerate</button><span class="copy-confirm" id="copied-waitlist">✓ Copied!</span></div></div>
     </div>
@@ -548,7 +579,7 @@
         <div class="field"><label>How the call takes place</label><select id="screen-method"><option>Phone call — I'll call them</option><option>Phone call — they'll call me</option><option>Zoom / video call</option><option>Google Meet</option></select></div>
         <div class="field"><label>Call link or number <span class="optional">(optional)</span></label><input type="text" id="screen-link" placeholder="e.g. zoom link or your number"></div>
       </div>
-      <div class="field" style="margin-top:0.5rem"><label style="display:flex;align-items:center;gap:0.5rem;font-size:0.82rem;color:var(--muted);font-weight:400"><input type="checkbox" id="subj-screening" style="width:auto;accent-color:var(--rust)"> Include subject line</label></div>
+            <div class="field" style="margin-top:0.5rem"><label style="display:flex;align-items:center;gap:0.5rem;font-size:0.82rem;color:var(--muted);font-weight:400"><input type="checkbox" id="subj-screening" style="width:auto;accent-color:var(--rust)"> Include subject line suggestion</label></div>
       <button class="btn-generate" onclick="generate('screening')"><span id="btn-screening-text">Generate email</span><span id="btn-screening-spin" class="spinner" style="display:none"></span></button>
       <div class="output-section" id="out-screening"><div class="output-label">Your personalised email</div><div class="output-box" id="outbox-screening"></div><div class="output-actions"><button class="btn-copy" onclick="copyOutput('screening')">Copy to clipboard</button><button class="btn-regen" onclick="generate('screening')">Regenerate</button><span class="copy-confirm" id="copied-screening">✓ Copied!</span></div></div>
     </div>
@@ -562,10 +593,10 @@
         <div class="field"><label>First session date & time</label><input type="text" id="wc-date" placeholder="e.g. Monday 19th May at 2pm"></div>
         <div class="field"><label>Session format <span class="optional">(pre-filled from profile)</span></label><input type="text" id="wc-format" placeholder="e.g. Online via Zoom"></div>
         <div class="field"><label>Location or link <span class="optional">(pre-filled from profile)</span></label><input type="text" id="wc-location" placeholder="e.g. Zoom link or practice address"></div>
-        <div class="field"><label>Is this their first experience of therapy?</label><select id="wc-firsttime"><option value="unknown">Not sure / not mentioned</option><option value="yes">Yes — first time in therapy</option><option value="no">No — they've been in therapy before</option></select></div>
+              <div class="field"><label>Is this their first experience of therapy?</label><select id="wc-firsttime"><option value="unknown">Not sure / not mentioned</option><option value="yes">Yes — first time in therapy</option><option value="no">No — they have been in therapy before</option></select></div>
       <div class="field"><label>Anything extra to include? <span class="optional">(optional)</span></label><textarea id="wc-notes" placeholder="e.g. paperwork to complete, parking info"></textarea></div>
       </div>
-      <div class="field" style="margin-top:0.5rem"><label style="display:flex;align-items:center;gap:0.5rem;font-size:0.82rem;color:var(--muted);font-weight:400"><input type="checkbox" id="subj-welcome" style="width:auto;accent-color:var(--rust)"> Include subject line</label></div>
+            <div class="field" style="margin-top:0.5rem"><label style="display:flex;align-items:center;gap:0.5rem;font-size:0.82rem;color:var(--muted);font-weight:400"><input type="checkbox" id="subj-welcome" style="width:auto;accent-color:var(--rust)"> Include subject line suggestion</label></div>
       <button class="btn-generate" onclick="generate('welcome')"><span id="btn-welcome-text">Generate email</span><span id="btn-welcome-spin" class="spinner" style="display:none"></span></button>
       <div class="output-section" id="out-welcome"><div class="output-label">Your personalised email</div><div class="output-box" id="outbox-welcome"></div><div class="output-actions"><button class="btn-copy" onclick="copyOutput('welcome')">Copy to clipboard</button><button class="btn-regen" onclick="generate('welcome')">Regenerate</button><span class="copy-confirm" id="copied-welcome">✓ Copied!</span></div></div>
     </div>
@@ -581,7 +612,7 @@
         <div class="field"><label>Location or link <span class="optional">(pre-filled)</span></label><input type="text" id="rem-location" placeholder="e.g. zoom link or address"></div>
         <div class="field"><label>Anything extra? <span class="optional">(optional)</span></label><input type="text" id="rem-extra" placeholder="e.g. cancellation notice reminder"></div>
       </div>
-      <div class="field" style="margin-top:0.5rem"><label style="display:flex;align-items:center;gap:0.5rem;font-size:0.82rem;color:var(--muted);font-weight:400"><input type="checkbox" id="subj-reminder" style="width:auto;accent-color:var(--rust)"> Include subject line</label></div>
+            <div class="field" style="margin-top:0.5rem"><label style="display:flex;align-items:center;gap:0.5rem;font-size:0.82rem;color:var(--muted);font-weight:400"><input type="checkbox" id="subj-reminder" style="width:auto;accent-color:var(--rust)"> Include subject line suggestion</label></div>
       <button class="btn-generate" onclick="generate('reminder')"><span id="btn-reminder-text">Generate email</span><span id="btn-reminder-spin" class="spinner" style="display:none"></span></button>
       <div class="output-section" id="out-reminder"><div class="output-label">Your personalised email</div><div class="output-box" id="outbox-reminder"></div><div class="output-actions"><button class="btn-copy" onclick="copyOutput('reminder')">Copy to clipboard</button><button class="btn-regen" onclick="generate('reminder')">Regenerate</button><span class="copy-confirm" id="copied-reminder">✓ Copied!</span></div></div>
     </div>
@@ -597,7 +628,7 @@
         <div class="field"><label>Payment due <span class="optional">(pre-filled)</span></label><input type="text" id="inv-due" placeholder="e.g. within 7 days"></div>
         <div class="field"><label>Bank details or payment link <span class="optional">(pre-filled)</span></label><input type="text" id="inv-details" placeholder="e.g. Sort: 12-34-56, Acc: 12345678"></div>
       </div>
-      <div class="field" style="margin-top:0.5rem"><label style="display:flex;align-items:center;gap:0.5rem;font-size:0.82rem;color:var(--muted);font-weight:400"><input type="checkbox" id="subj-invoice" style="width:auto;accent-color:var(--rust)"> Include subject line</label></div>
+            <div class="field" style="margin-top:0.5rem"><label style="display:flex;align-items:center;gap:0.5rem;font-size:0.82rem;color:var(--muted);font-weight:400"><input type="checkbox" id="subj-invoice" style="width:auto;accent-color:var(--rust)"> Include subject line suggestion</label></div>
       <button class="btn-generate" onclick="generate('invoice')"><span id="btn-invoice-text">Generate email</span><span id="btn-invoice-spin" class="spinner" style="display:none"></span></button>
       <div class="output-section" id="out-invoice"><div class="output-label">Your personalised email</div><div class="output-box" id="outbox-invoice"></div><div class="output-actions"><button class="btn-copy" onclick="copyOutput('invoice')">Copy to clipboard</button><button class="btn-regen" onclick="generate('invoice')">Regenerate</button><span class="copy-confirm" id="copied-invoice">✓ Copied!</span></div></div>
     </div>
@@ -613,7 +644,7 @@
         <div class="field"><label>Payment method <span class="optional">(pre-filled)</span></label><input type="text" id="miss-method" placeholder="e.g. BACS"></div>
         <div class="field"><label>Payment details <span class="optional">(pre-filled)</span></label><input type="text" id="miss-details" placeholder="e.g. Sort: 12-34-56, Acc: 12345678"></div>
       </div>
-      <div class="field" style="margin-top:0.5rem"><label style="display:flex;align-items:center;gap:0.5rem;font-size:0.82rem;color:var(--muted);font-weight:400"><input type="checkbox" id="subj-missed" style="width:auto;accent-color:var(--rust)"> Include subject line</label></div>
+            <div class="field" style="margin-top:0.5rem"><label style="display:flex;align-items:center;gap:0.5rem;font-size:0.82rem;color:var(--muted);font-weight:400"><input type="checkbox" id="subj-missed" style="width:auto;accent-color:var(--rust)"> Include subject line suggestion</label></div>
       <button class="btn-generate" onclick="generate('missed')"><span id="btn-missed-text">Generate email</span><span id="btn-missed-spin" class="spinner" style="display:none"></span></button>
       <div class="output-section" id="out-missed"><div class="output-label">Your personalised email</div><div class="output-box" id="outbox-missed"></div><div class="output-actions"><button class="btn-copy" onclick="copyOutput('missed')">Copy to clipboard</button><button class="btn-regen" onclick="generate('missed')">Regenerate</button><span class="copy-confirm" id="copied-missed">✓ Copied!</span></div></div>
     </div>
@@ -627,7 +658,7 @@
         <div class="field"><label>Anything specific to acknowledge? <span class="optional">(optional)</span></label><textarea id="off-notes" placeholder="e.g. the progress they made, themes you worked on, their courage"></textarea></div>
         <div class="field"><label>Mention returning?</label><select id="off-return"><option value="">Don't mention it</option><option value="yes">Yes — the door is open if they need support again</option><option value="pause">Yes — we're pausing, not ending</option></select></div>
       </div>
-      <div class="field" style="margin-top:0.5rem"><label style="display:flex;align-items:center;gap:0.5rem;font-size:0.82rem;color:var(--muted);font-weight:400"><input type="checkbox" id="subj-offboard" style="width:auto;accent-color:var(--rust)"> Include subject line</label></div>
+            <div class="field" style="margin-top:0.5rem"><label style="display:flex;align-items:center;gap:0.5rem;font-size:0.82rem;color:var(--muted);font-weight:400"><input type="checkbox" id="subj-offboard" style="width:auto;accent-color:var(--rust)"> Include subject line suggestion</label></div>
       <button class="btn-generate" onclick="generate('offboard')"><span id="btn-offboard-text">Generate email</span><span id="btn-offboard-spin" class="spinner" style="display:none"></span></button>
       <div class="output-section" id="out-offboard"><div class="output-label">Your personalised email</div><div class="output-box" id="outbox-offboard"></div><div class="output-actions"><button class="btn-copy" onclick="copyOutput('offboard')">Copy to clipboard</button><button class="btn-regen" onclick="generate('offboard')">Regenerate</button><span class="copy-confirm" id="copied-offboard">✓ Copied!</span></div></div>
     </div>
@@ -642,10 +673,10 @@
         <div class="field"><label>New fee</label><input type="text" id="fee-new" placeholder="e.g. £95 per session"></div>
         <div class="field"><label>Effective from</label><input type="text" id="fee-date" placeholder="e.g. 1st September 2025"></div>
         <div class="field"><label>Notice you're giving</label><input type="text" id="fee-notice" placeholder="e.g. 6 weeks notice"></div>
-        <div class="field"><label>How long have you worked with this client?</label><select id="fee-duration"><option value="less than 3 months">Less than 3 months</option><option value="3–6 months">3–6 months</option><option value="6–12 months">6–12 months</option><option value="1–2 years">1–2 years</option><option value="more than 2 years">More than 2 years</option></select></div>
+              <div class="field"><label>How long have you been working with this client?</label><select id="fee-duration"><option value="less than 3 months">Less than 3 months</option><option value="3–6 months">3–6 months</option><option value="6–12 months">6–12 months</option><option value="1–2 years">1–2 years</option><option value="more than 2 years">More than 2 years</option></select></div>
       <div class="field"><label>Reason <span class="optional">(optional — you don't have to give one)</span></label><input type="text" id="fee-reason" placeholder="e.g. annual review, cost of living, ongoing CPD"></div>
       </div>
-      <div class="field" style="margin-top:0.5rem"><label style="display:flex;align-items:center;gap:0.5rem;font-size:0.82rem;color:var(--muted);font-weight:400"><input type="checkbox" id="subj-feeincrease" style="width:auto;accent-color:var(--rust)"> Include subject line</label></div>
+            <div class="field" style="margin-top:0.5rem"><label style="display:flex;align-items:center;gap:0.5rem;font-size:0.82rem;color:var(--muted);font-weight:400"><input type="checkbox" id="subj-feeincrease" style="width:auto;accent-color:var(--rust)"> Include subject line suggestion</label></div>
       <button class="btn-generate" onclick="generate('feeincrease')"><span id="btn-feeincrease-text">Generate letter</span><span id="btn-feeincrease-spin" class="spinner" style="display:none"></span></button>
       <div class="output-section" id="out-feeincrease"><div class="output-label">Your personalised letter</div><div class="output-box" id="outbox-feeincrease"></div><div class="output-actions"><button class="btn-copy" onclick="copyOutput('feeincrease')">Copy to clipboard</button><button class="btn-regen" onclick="generate('feeincrease')">Regenerate</button><span class="copy-confirm" id="copied-feeincrease">✓ Copied!</span></div></div>
     </div>
@@ -668,7 +699,7 @@
         <div class="field"><label>Describe the situation <span class="optional">(optional — adds specificity)</span></label><textarea id="bnd-situation" placeholder="e.g. They've been texting between sessions asking for support. I want to be kind but clear."></textarea></div>
         <div class="field"><label>Tone</label><div class="tone-options" id="tone-bnd"><button class="tone-btn selected" onclick="selectTone('bnd','warm')">Warm but clear</button><button class="tone-btn" onclick="selectTone('bnd','direct')">Direct & firm</button><button class="tone-btn" onclick="selectTone('bnd','gentle')">Very gentle</button></div></div>
       </div>
-      <div class="field" style="margin-top:0.5rem"><label style="display:flex;align-items:center;gap:0.5rem;font-size:0.82rem;color:var(--muted);font-weight:400"><input type="checkbox" id="subj-boundary" style="width:auto;accent-color:var(--rust)"> Include subject line</label></div>
+            <div class="field" style="margin-top:0.5rem"><label style="display:flex;align-items:center;gap:0.5rem;font-size:0.82rem;color:var(--muted);font-weight:400"><input type="checkbox" id="subj-boundary" style="width:auto;accent-color:var(--rust)"> Include subject line suggestion</label></div>
       <button class="btn-generate" onclick="generate('boundary')"><span id="btn-boundary-text">Generate email</span><span id="btn-boundary-spin" class="spinner" style="display:none"></span></button>
       <div class="output-section" id="out-boundary"><div class="output-label">Your personalised email</div><div class="output-box" id="outbox-boundary"></div><div class="output-actions"><button class="btn-copy" onclick="copyOutput('boundary')">Copy to clipboard</button><button class="btn-regen" onclick="generate('boundary')">Regenerate</button><span class="copy-confirm" id="copied-boundary">✓ Copied!</span></div></div>
     </div>
@@ -683,7 +714,7 @@
         <div class="field"><label>Exceptions <span class="optional">(pre-filled)</span></label><input type="text" id="can-exceptions" placeholder="e.g. genuine emergencies at my discretion"></div>
         <div class="field"><label>Format</label><div class="tone-options" id="tone-can"><button class="tone-btn selected" onclick="selectTone('can','document')">Standalone policy document</button><button class="tone-btn" onclick="selectTone('can','email')">Email to clients</button></div></div>
       </div>
-      <div class="field" style="margin-top:0.5rem"><label style="display:flex;align-items:center;gap:0.5rem;font-size:0.82rem;color:var(--muted);font-weight:400"><input type="checkbox" id="subj-cancellation" style="width:auto;accent-color:var(--rust)"> Include subject line</label></div>
+            <div class="field" style="margin-top:0.5rem"><label style="display:flex;align-items:center;gap:0.5rem;font-size:0.82rem;color:var(--muted);font-weight:400"><input type="checkbox" id="subj-cancellation" style="width:auto;accent-color:var(--rust)"> Include subject line suggestion</label></div>
       <button class="btn-generate" onclick="generate('cancellation')"><span id="btn-cancellation-text">Generate policy</span><span id="btn-cancellation-spin" class="spinner" style="display:none"></span></button>
       <div class="output-section" id="out-cancellation"><div class="output-label">Your cancellation policy</div><div class="output-box" id="outbox-cancellation"></div><div class="output-actions"><button class="btn-copy" onclick="copyOutput('cancellation')">Copy to clipboard</button><button class="btn-regen" onclick="generate('cancellation')">Regenerate</button><span class="copy-confirm" id="copied-cancellation">✓ Copied!</span></div></div>
     </div>
@@ -697,7 +728,7 @@
         <div class="field"><label>Reason <span class="optional">(internal — won't be stated bluntly in the email)</span></label><select id="ref-reason"><option value="specialism">Outside my specialism</option><option value="intensity">They need more intensive support</option><option value="fit">We're not the right fit therapeutically</option><option value="ethical">Ethical boundary / dual relationship</option><option value="capacity">I don't have capacity</option></select></div>
         <div class="field"><label>Resources to signpost <span class="optional">(optional)</span></label><input type="text" id="ref-resources" placeholder="e.g. BACP directory, their GP, a specific service"></div>
       </div>
-      <div class="field" style="margin-top:0.5rem"><label style="display:flex;align-items:center;gap:0.5rem;font-size:0.82rem;color:var(--muted);font-weight:400"><input type="checkbox" id="subj-referral" style="width:auto;accent-color:var(--rust)"> Include subject line</label></div>
+            <div class="field" style="margin-top:0.5rem"><label style="display:flex;align-items:center;gap:0.5rem;font-size:0.82rem;color:var(--muted);font-weight:400"><input type="checkbox" id="subj-referral" style="width:auto;accent-color:var(--rust)"> Include subject line suggestion</label></div>
       <button class="btn-generate" onclick="generate('referral')"><span id="btn-referral-text">Generate email</span><span id="btn-referral-spin" class="spinner" style="display:none"></span></button>
       <div class="output-section" id="out-referral"><div class="output-label">Your personalised email</div><div class="output-box" id="outbox-referral"></div><div class="output-actions"><button class="btn-copy" onclick="copyOutput('referral')">Copy to clipboard</button><button class="btn-regen" onclick="generate('referral')">Regenerate</button><span class="copy-confirm" id="copied-referral">✓ Copied!</span></div></div>
     </div>
@@ -714,12 +745,13 @@
         <div class="field"><label>Payment details <span class="optional">(pre-filled)</span></label><input type="text" id="late-method" placeholder="e.g. BACS — Sort: 12-34-56, Acc: 12345678"></div>
         <div class="field"><label>Deadline to pay by</label><input type="text" id="late-deadline" placeholder="e.g. by Friday 23rd May"></div>
       </div>
-      <div class="field" style="margin-top:0.5rem"><label style="display:flex;align-items:center;gap:0.5rem;font-size:0.82rem;color:var(--muted);font-weight:400"><input type="checkbox" id="subj-latepayment" style="width:auto;accent-color:var(--rust)"> Include subject line</label></div>
+            <div class="field" style="margin-top:0.5rem"><label style="display:flex;align-items:center;gap:0.5rem;font-size:0.82rem;color:var(--muted);font-weight:400"><input type="checkbox" id="subj-latepayment" style="width:auto;accent-color:var(--rust)"> Include subject line suggestion</label></div>
       <button class="btn-generate" onclick="generate('latepayment')"><span id="btn-latepayment-text">Generate email</span><span id="btn-latepayment-spin" class="spinner" style="display:none"></span></button>
       <div class="output-section" id="out-latepayment"><div class="output-label">Your personalised email</div><div class="output-box" id="outbox-latepayment"></div><div class="output-actions"><button class="btn-copy" onclick="copyOutput('latepayment')">Copy to clipboard</button><button class="btn-regen" onclick="generate('latepayment')">Regenerate</button><span class="copy-confirm" id="copied-latepayment">✓ Copied!</span></div></div>
     </div>
 
   
+
     <!-- firstsessionprep -->
     <div id="tool-firstsessionprep" class="tool-panel">
       <h2>First session prep email</h2>
@@ -728,46 +760,49 @@
       <div class="field"><label>First session date and time</label><input type="text" id="fsp-date" placeholder="e.g. Thursday 12 June at 2pm"></div>
       <div class="field"><label>Session format</label><select id="fsp-format"><option value="online via video call">Online (video call)</option><option value="in person">In person</option></select></div>
       <div class="field"><label>Platform or address</label><input type="text" id="fsp-location" placeholder="e.g. Zoom link to follow / 12 High Street, Bristol"></div>
-      <div class="field"><label>Anything specific to mention? <span class="opt">(optional)</span></label><input type="text" id="fsp-notes" placeholder="e.g. parking info, access notes"></div>
-      <div class="field" style="margin-top:0.5rem"><label style="display:flex;align-items:center;gap:0.5rem;font-size:0.82rem;color:var(--muted);font-weight:400"><input type="checkbox" id="subj-firstsessionprep" style="width:auto;accent-color:var(--rust)"> Include subject line</label></div>
+      <div class="field"><label>Anything specific to mention? <span class="opt">(optional)</span></label><input type="text" id="fsp-notes" placeholder="e.g. parking info, what to bring, access notes"></div>
+      <div class="field" style="margin-top:0.5rem"><label style="display:flex;align-items:center;gap:0.5rem;font-size:0.82rem;color:var(--muted);font-weight:400"><input type="checkbox" id="subj-firstsessionprep" style="width:auto;accent-color:var(--rust)"> Include subject line suggestion</label></div>
       <button class="btn-generate" onclick="generate('firstsessionprep')"><span id="btn-firstsessionprep-text">Generate email</span><span id="btn-firstsessionprep-spin" class="spinner" style="display:none"></span></button>
       <div class="output-section" id="out-firstsessionprep"><div class="output-label">Your personalised email</div><div class="output-box" id="outbox-firstsessionprep"></div><div class="output-actions"><button class="btn-copy" onclick="copyOutput('firstsessionprep')">Copy to clipboard</button><button class="btn-regen" onclick="generate('firstsessionprep')">Regenerate</button><span class="copy-confirm" id="copied-firstsessionprep">✓ Copied!</span></div></div>
     </div>
+
     <!-- reschedule -->
     <div id="tool-reschedule" class="tool-panel">
       <h2>Rescheduling a session</h2>
       <div class="prefilled-notice" id="pf-reschedule">✓ Pre-filled from your practice profile. <a onclick="openSetup(true)">Edit profile</a></div>
       <div class="field"><label>Client name</label><input type="text" id="res-name" placeholder="e.g. Jamie"></div>
       <div class="field"><label>Session being moved</label><input type="text" id="res-original" placeholder="e.g. Tuesday 18 June at 10am"></div>
-      <div class="field"><label>Reason for rescheduling</label><select id="res-reason"><option value="an unexpected commitment on my end">Unexpected commitment</option><option value="illness">Illness</option><option value="a personal matter">Personal matter</option><option value="a diary error">Diary error</option></select></div>
+      <div class="field"><label>Reason for rescheduling</label><select id="res-reason"><option value="an unexpected commitment on my end">Unexpected commitment</option><option value="illness">Illness</option><option value="a personal matter">Personal matter (no detail needed)</option><option value="a diary error">Diary error</option></select></div>
       <div class="field"><label>Proposed new time <span class="opt">(optional)</span></label><input type="text" id="res-newtime" placeholder="e.g. Thursday 20 June at 2pm — or leave blank to offer options"></div>
-      <div class="field" style="margin-top:0.5rem"><label style="display:flex;align-items:center;gap:0.5rem;font-size:0.82rem;color:var(--muted);font-weight:400"><input type="checkbox" id="subj-reschedule" style="width:auto;accent-color:var(--rust)"> Include subject line</label></div>
+      <div class="field" style="margin-top:0.5rem"><label style="display:flex;align-items:center;gap:0.5rem;font-size:0.82rem;color:var(--muted);font-weight:400"><input type="checkbox" id="subj-reschedule" style="width:auto;accent-color:var(--rust)"> Include subject line suggestion</label></div>
       <button class="btn-generate" onclick="generate('reschedule')"><span id="btn-reschedule-text">Generate email</span><span id="btn-reschedule-spin" class="spinner" style="display:none"></span></button>
       <div class="output-section" id="out-reschedule"><div class="output-label">Your personalised email</div><div class="output-box" id="outbox-reschedule"></div><div class="output-actions"><button class="btn-copy" onclick="copyOutput('reschedule')">Copy to clipboard</button><button class="btn-regen" onclick="generate('reschedule')">Regenerate</button><span class="copy-confirm" id="copied-reschedule">✓ Copied!</span></div></div>
     </div>
+
     <!-- therapybreak -->
     <div id="tool-therapybreak" class="tool-panel">
       <h2>Therapy break / holiday notice</h2>
       <div class="prefilled-notice" id="pf-therapybreak">✓ Pre-filled from your practice profile. <a onclick="openSetup(true)">Edit profile</a></div>
-      <div class="field"><label>Client name <span class="opt">(optional)</span></label><input type="text" id="brk-name" placeholder="e.g. Jamie — or leave blank for a general notice"></div>
+      <div class="field"><label>Client name <span class="opt">(or leave blank for a general notice)</span></label><input type="text" id="brk-name" placeholder="e.g. Jamie — or leave blank"></div>
       <div class="field"><label>Break dates</label><input type="text" id="brk-dates" placeholder="e.g. 21 July – 4 August"></div>
       <div class="field"><label>Last session before break</label><input type="text" id="brk-last" placeholder="e.g. Tuesday 18 July"></div>
-      <div class="field"><label>Return / first session back</label><input type="text" id="brk-return" placeholder="e.g. Monday 5 August — or TBC"></div>
-      <div class="field"><label>Crisis contact during break <span class="opt">(optional)</span></label><input type="text" id="brk-cover" placeholder="e.g. their GP, or Samaritans 116 123"></div>
-      <div class="field" style="margin-top:0.5rem"><label style="display:flex;align-items:center;gap:0.5rem;font-size:0.82rem;color:var(--muted);font-weight:400"><input type="checkbox" id="subj-therapybreak" style="width:auto;accent-color:var(--rust)"> Include subject line</label></div>
+      <div class="field"><label>Return date / first session back</label><input type="text" id="brk-return" placeholder="e.g. Monday 5 August — or TBC"></div>
+      <div class="field"><label>Cover or emergency contact during break? <span class="opt">(optional)</span></label><input type="text" id="brk-cover" placeholder="e.g. your GP, or the Samaritans on 116 123"></div>
+      <div class="field" style="margin-top:0.5rem"><label style="display:flex;align-items:center;gap:0.5rem;font-size:0.82rem;color:var(--muted);font-weight:400"><input type="checkbox" id="subj-therapybreak" style="width:auto;accent-color:var(--rust)"> Include subject line suggestion</label></div>
       <button class="btn-generate" onclick="generate('therapybreak')"><span id="btn-therapybreak-text">Generate email</span><span id="btn-therapybreak-spin" class="spinner" style="display:none"></span></button>
       <div class="output-section" id="out-therapybreak"><div class="output-label">Your personalised email</div><div class="output-box" id="outbox-therapybreak"></div><div class="output-actions"><button class="btn-copy" onclick="copyOutput('therapybreak')">Copy to clipboard</button><button class="btn-regen" onclick="generate('therapybreak')">Regenerate</button><span class="copy-confirm" id="copied-therapybreak">✓ Copied!</span></div></div>
     </div>
+
     <!-- gdpr -->
     <div id="tool-gdpr" class="tool-panel">
       <h2>GDPR / privacy notice</h2>
       <div class="prefilled-notice" id="pf-gdpr">✓ Pre-filled from your practice profile. <a onclick="openSetup(true)">Edit profile</a></div>
       <div class="field"><label>Client name</label><input type="text" id="gdpr-name" placeholder="e.g. Jamie"></div>
-      <div class="field"><label>Format</label><select id="gdpr-format"><option value="a short covering email with the privacy notice attached">Short covering email (notice attached)</option><option value="a standalone privacy notice document">Standalone privacy notice</option><option value="privacy notice woven into the welcome email">Woven into welcome email</option></select></div>
-      <div class="field"><label>How long records are kept</label><select id="gdpr-retention"><option value="7 years">7 years (standard for adults)</option><option value="until the client turns 25">Until age 25 (minor clients)</option><option value="3 years">3 years</option><option value="as required by my professional body">As required by professional body</option></select></div>
-      <div class="field"><label>Session notes</label><select id="gdpr-notes"><option value="brief session notes stored securely">Brief notes, stored securely</option><option value="no written session notes are kept">No written notes kept</option><option value="process notes for supervision purposes only">Process notes for supervision only</option></select></div>
-      <div class="field"><label>Additional data details <span class="opt">(optional)</span></label><input type="text" id="gdpr-extra" placeholder="e.g. stored in iCloud, encrypted; no third-party sharing"></div>
-      <div class="field" style="margin-top:0.5rem"><label style="display:flex;align-items:center;gap:0.5rem;font-size:0.82rem;color:var(--muted);font-weight:400"><input type="checkbox" id="subj-gdpr" style="width:auto;accent-color:var(--rust)"> Include subject line</label></div>
+      <div class="field"><label>Format</label><select id="gdpr-format"><option value="a short covering email with the privacy notice attached">Short covering email (privacy notice attached)</option><option value="a standalone privacy notice document">Standalone privacy notice document</option><option value="privacy notice woven into the welcome email">Woven into welcome email</option></select></div>
+      <div class="field"><label>How long records are kept</label><select id="gdpr-retention"><option value="7 years">7 years (standard for adults)</option><option value="until the client turns 25 (for clients who were minors)">Until age 25 (for minor clients)</option><option value="3 years">3 years</option><option value="as required by my professional body">As required by my professional body</option></select></div>
+      <div class="field"><label>Notes stored</label><select id="gdpr-notes"><option value="brief session notes stored securely">Brief session notes, stored securely</option><option value="no written session notes are kept">No written session notes kept</option><option value="process notes for supervision purposes only">Process notes for supervision only</option></select></div>
+      <div class="field"><label>Any additional details <span class="opt">(optional)</span></label><input type="text" id="gdpr-extra" placeholder="e.g. data stored in iCloud, encrypted; no third-party sharing"></div>
+      <div class="field" style="margin-top:0.5rem"><label style="display:flex;align-items:center;gap:0.5rem;font-size:0.82rem;color:var(--muted);font-weight:400"><input type="checkbox" id="subj-gdpr" style="width:auto;accent-color:var(--rust)"> Include subject line suggestion</label></div>
       <button class="btn-generate" onclick="generate('gdpr')"><span id="btn-gdpr-text">Generate email</span><span id="btn-gdpr-spin" class="spinner" style="display:none"></span></button>
       <div class="output-section" id="out-gdpr"><div class="output-label">Your personalised email / document</div><div class="output-box" id="outbox-gdpr"></div><div class="output-actions"><button class="btn-copy" onclick="copyOutput('gdpr')">Copy to clipboard</button><button class="btn-regen" onclick="generate('gdpr')">Regenerate</button><span class="copy-confirm" id="copied-gdpr">✓ Copied!</span></div></div>
     </div>
@@ -1040,12 +1075,12 @@ function buildPrompt(type) {
   const practice = p.practice ? ` at ${p.practice}` : '';
   const signoff = p.signoff || `Kind regards, ${name}`;
   const approach = p.approach ? `Therapeutic approach: ${p.approach}.` : '';
-  const specialism = p.specialism ? `They specialise in: ${p.specialism}.` : '';
-  const voice = p.voice ? `Voice and tone guidance from the therapist: "${p.voice}".` : '';
   const profbody = p.profbody ? `Professional body: ${p.profbody}${p.regnum ? ' (membership no. ' + p.regnum + ')' : ''}.` : '';
   const supervised = p.supervised === 'yes' ? 'Note: the therapist is working under clinical supervision.' : '';
   const frequency = p.frequency ? `Typical session frequency: ${p.frequency}.` : '';
   const contactPolicy = p.contact ? `Between-session contact policy: ${p.contact}.` : '';
+  const specialism = p.specialism ? `They specialise in: ${p.specialism}.` : '';
+  const voice = p.voice ? `Voice and tone guidance from the therapist: "${p.voice}".` : '';
   const cancelPolicy = p.cancelNotice ? `Cancellation policy: ${p.cancelNotice} notice required; ${p.cancelCharge}.` : '';
 
   const base = `You are helping a private practice therapist named ${name}${practice} write a professional, warm, human email.
@@ -1069,7 +1104,7 @@ Session fee: ${val('avail-fee') || 'to be discussed'}
 Session length: ${p.length || '50 minutes'}
 Introductory call offered: ${p.screening === 'yes' ? 'yes — offer a free 15-minute introductory call as the next step' : 'no — invite them to book a first session directly'}
 Tone: ${getTone('avail')}
-First therapy experience: ${val('avail-firsttime') === 'yes' ? 'yes — first time in therapy; be reassuring and avoid jargon' : val('avail-firsttime') === 'no' ? 'no — they have been in therapy before' : 'unknown'}
+First therapy experience: ${val('avail-firsttime') === 'yes' ? 'yes — first time in therapy; be reassuring and avoid jargon' : val('avail-firsttime') === 'no' ? 'no — they have been in therapy before; no need to over-explain' : 'unknown'}
 Warmly acknowledge their reach-out. Confirm availability, share practical details, and give a clear next step.${document.getElementById('subj-available')?.checked ? ' Start with a suggested subject line on the first line, prefixed with Subject:' : ''}`;
 
     case 'noavail': return base +
@@ -1103,8 +1138,8 @@ First session: ${val('wc-date') || 'as arranged'}
 Format: ${val('wc-format') || formatLabel(p.format, p.location)}
 Location or link: ${val('wc-location') || p.location || 'to be shared separately'}
 Extra info: ${val('wc-notes') || 'none'}
+First therapy experience: ${val('wc-firsttime') === 'yes' ? 'yes — first time in therapy; be warm and reassuring, gently normalise any nerves, avoid clinical jargon' : val('wc-firsttime') === 'no' ? 'no — experienced therapy client; keep it practical and warm without over-explaining' : 'unknown — be warmly welcoming'}
 ${cancelPolicy}
-First therapy experience: ${val('wc-firsttime') === 'yes' ? 'yes — first time in therapy; be warm and reassuring, gently normalise nerves, avoid clinical jargon' : val('wc-firsttime') === 'no' ? 'no — experienced therapy client; keep it practical and warm' : 'unknown'}
 Warm and grounding. Mention cancellation policy briefly if set.${document.getElementById('subj-welcome')?.checked ? ' Start with a suggested subject line on the first line, prefixed with Subject:' : ''}`;
 
     case 'reminder': return base +
@@ -1152,7 +1187,7 @@ Effective from: ${val('fee-date') || 'date to be specified'}
 Notice given: ${val('fee-notice') || 'appropriate notice'}
 Length of working relationship: ${val('fee-duration') || 'not specified'}
 Reason: ${val('fee-reason') || 'no reason — simply announce as a scheduled annual review'}
-Clear and matter-of-fact. No need to over-justify or apologise. If this is a long-standing client (1+ years), add a brief warm acknowledgement of the relationship.${document.getElementById('subj-feeincrease')?.checked ? ' Start with a suggested subject line on the first line, prefixed with Subject:' : ''}`;
+Clear and matter-of-fact. No need to over-justify or apologise. If this is a long-standing client (1+ years), add a brief warm acknowledgement of the relationship before the practical information.${document.getElementById('subj-feeincrease')?.checked ? ' Start with a suggested subject line on the first line, prefixed with Subject:' : ''}`;
 
     case 'boundary': return base +
 `Write an email setting a professional boundary with a therapy client.
@@ -1195,7 +1230,7 @@ First session: ${val('fsp-date') || 'as arranged'}
 Format: ${val('fsp-format') || 'as arranged'}
 Platform or address: ${val('fsp-location') || p.location || 'as previously shared'}
 Additional notes: ${val('fsp-notes') || 'none'}
-Brief and grounding. Confirm logistics clearly. Mention no preparation is needed. Keep it short.${document.getElementById('subj-firstsessionprep')?.checked ? ' Start with a suggested subject line on the first line, prefixed with Subject:' : ''}`;
+Brief and grounding. Confirm logistics clearly. Mention no preparation is needed. Keep it short — this is a practical briefing, not a welcome letter.${document.getElementById('subj-firstsessionprep')?.checked ? ' Start with a suggested subject line on the first line, prefixed with Subject:' : ''}`;
 
     case 'reschedule': return base +
 `Write an email to a therapy client to reschedule an upcoming session.
@@ -1211,8 +1246,8 @@ Client name: ${val('brk-name') || 'the client'}
 Break dates: ${val('brk-dates') || 'as noted'}
 Last session before break: ${val('brk-last') || 'as arranged'}
 Return / first session back: ${val('brk-return') || 'to be confirmed'}
-Crisis contact during break: ${val('brk-cover') || 'their GP or the Samaritans (116 123)'}
-Warm and clear. Provide crisis contact without dramatising it. Be matter-of-fact about the return date.${document.getElementById('subj-therapybreak')?.checked ? ' Start with a suggested subject line on the first line, prefixed with Subject:' : ''}`;
+Emergency or crisis contact during break: ${val('brk-cover') || 'their GP or the Samaritans (116 123)'}
+Warm and clear. Give enough notice. Provide crisis contact without dramatising it. Be matter-of-fact about the return date.${document.getElementById('subj-therapybreak')?.checked ? ' Start with a suggested subject line on the first line, prefixed with Subject:' : ''}`;
 
     case 'gdpr': return base +
 `Write ${val('gdpr-format') || 'a short covering email with the privacy notice attached'} for a therapy client.
@@ -1221,7 +1256,7 @@ Records retention: ${val('gdpr-retention') || '7 years'}
 Session notes: ${val('gdpr-notes') || 'brief session notes stored securely'}
 Additional data details: ${val('gdpr-extra') || 'none provided'}
 Professional body: ${p.profbody || 'not specified'}
-Clear and compliant. Not intimidating. Explain what data is held, why, how long, and their rights (access, deletion, correction).${document.getElementById('subj-gdpr')?.checked ? ' Start with a suggested subject line on the first line, prefixed with Subject:' : ''}`;
+Clear and compliant. Not intimidating. Explain what data is held, why, how long, and their rights (access, deletion, correction). If it is a covering email, keep it brief and direct them to the attached notice.${document.getElementById('subj-gdpr')?.checked ? ' Start with a suggested subject line on the first line, prefixed with Subject:' : ''}`;
 
     default: return base + 'Write a professional email for a therapist in private practice.';
   }
