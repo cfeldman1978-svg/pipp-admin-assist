@@ -1106,18 +1106,10 @@ async function generate(type) {
   outBox.textContent = 'Writing your email…';
 
   try {
-    const res = await fetch('https://api.anthropic.com/v1/messages', {
+    const res = await fetch('/.netlify/functions/generate', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': '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',
-        'anthropic-version': '2023-06-01'
-      },
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
-        max_tokens: 1000,
-        messages: [{ role: 'user', content: buildPrompt(type) }]
-      })
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ prompt: buildPrompt(type) })
     });
     const data = await res.json();
     const text = data.content?.[0]?.text || 'Something went wrong — please try again.';
