@@ -1,0 +1,1156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Practice Admin Assistant — Prosper in Private Practice</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,wght@0,400;0,600;1,400&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --rust:  #8F4228;
+    --deep:  #643B33;
+    --terra: #BF6B4A;
+    --blush: #E9DDD8;
+    --mauve: #CAAEA2;
+    --cream: #F8F4F2;
+    --text:  #2C1A16;
+    --muted: #7A5C55;
+    --white: #ffffff;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Lato', sans-serif; background: var(--cream); color: var(--text); min-height: 100vh; }
+
+  /* ── SETUP OVERLAY ── */
+  #setup-overlay {
+    position: fixed; inset: 0; background: rgba(44,26,22,0.55);
+    z-index: 200; display: flex; align-items: center; justify-content: center;
+    padding: 1rem; backdrop-filter: blur(3px);
+  }
+  #setup-overlay.hidden { display: none; }
+  .setup-modal {
+    background: var(--white); border-radius: 12px;
+    max-width: 580px; width: 100%; max-height: 90vh; overflow-y: auto;
+    box-shadow: 0 20px 60px rgba(44,26,22,0.25);
+  }
+  .setup-header {
+    background: var(--deep); padding: 2rem 2rem 1.5rem;
+    border-radius: 12px 12px 0 0; position: sticky; top: 0; z-index: 1;
+  }
+  .setup-header h2 { font-family: 'Bodoni Moda', serif; color: var(--blush); font-size: 1.5rem; margin-bottom: 0.4rem; }
+  .setup-header p { color: var(--mauve); font-size: 0.85rem; line-height: 1.5; }
+  .setup-progress {
+    display: flex; gap: 4px; margin-top: 1.2rem;
+  }
+  .setup-progress-step {
+    height: 3px; flex: 1; background: rgba(255,255,255,0.2); border-radius: 2px;
+    transition: background 0.3s;
+  }
+  .setup-progress-step.done { background: var(--terra); }
+  .setup-progress-step.active { background: var(--blush); }
+
+  .setup-body { padding: 2rem; }
+  .setup-section { display: none; }
+  .setup-section.active { display: block; }
+  .setup-section-title {
+    font-family: 'Bodoni Moda', serif; font-size: 1.1rem; color: var(--deep);
+    margin-bottom: 0.35rem;
+  }
+  .setup-section-sub { font-size: 0.83rem; color: var(--muted); margin-bottom: 1.5rem; line-height: 1.5; }
+
+  .setup-fields { display: flex; flex-direction: column; gap: 1rem; }
+  .setup-field label {
+    display: block; font-size: 0.75rem; font-weight: 700;
+    letter-spacing: 0.08em; text-transform: uppercase; color: var(--deep); margin-bottom: 0.4rem;
+  }
+  .setup-field label .opt { font-weight: 400; text-transform: none; letter-spacing: 0; color: var(--mauve); font-size: 0.73rem; }
+  .setup-field input, .setup-field select, .setup-field textarea {
+    width: 100%; padding: 0.75rem 1rem; border: 1.5px solid var(--blush);
+    border-radius: 6px; font-family: 'Lato', sans-serif; font-size: 0.9rem;
+    color: var(--text); background: var(--cream); outline: none; transition: border-color 0.2s;
+  }
+  .setup-field input:focus, .setup-field select:focus, .setup-field textarea:focus { border-color: var(--rust); background: white; }
+  .setup-field textarea { min-height: 80px; resize: vertical; }
+
+  .setup-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+
+  .setup-footer {
+    padding: 1.25rem 2rem; border-top: 1px solid var(--blush);
+    display: flex; justify-content: space-between; align-items: center;
+    position: sticky; bottom: 0; background: white; border-radius: 0 0 12px 12px;
+  }
+  .btn-setup-back {
+    background: transparent; border: none; color: var(--muted);
+    font-family: 'Lato', sans-serif; font-size: 0.85rem; cursor: pointer;
+    padding: 0.5rem; transition: color 0.15s;
+  }
+  .btn-setup-back:hover { color: var(--deep); }
+  .btn-setup-next {
+    background: var(--rust); color: white; border: none;
+    padding: 0.75rem 1.75rem; border-radius: 6px; font-family: 'Lato', sans-serif;
+    font-size: 0.875rem; font-weight: 700; cursor: pointer; transition: background 0.15s;
+  }
+  .btn-setup-next:hover { background: var(--deep); }
+  .setup-skip {
+    font-size: 0.78rem; color: var(--mauve); cursor: pointer; text-decoration: underline;
+    background: none; border: none; font-family: 'Lato', sans-serif;
+  }
+  .setup-skip:hover { color: var(--muted); }
+
+  /* ── HEADER ── */
+  header {
+    background: var(--deep); padding: 1.25rem 2.5rem;
+    display: flex; align-items: center; justify-content: space-between;
+    position: sticky; top: 0; z-index: 100;
+    box-shadow: 0 2px 20px rgba(100,59,51,0.3);
+  }
+  .logo { font-family: 'Bodoni Moda', serif; color: var(--blush); font-size: 1.05rem; letter-spacing: 0.02em; line-height: 1.3; }
+  .logo span { color: var(--mauve); font-style: italic; font-size: 0.8rem; display: block; font-weight: 400; }
+  .header-actions { display: flex; align-items: center; gap: 1rem; }
+  .btn-settings {
+    background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);
+    color: var(--blush); padding: 0.45rem 1rem; border-radius: 4px;
+    font-family: 'Lato', sans-serif; font-size: 0.78rem; font-weight: 700;
+    letter-spacing: 0.05em; cursor: pointer; transition: background 0.15s;
+    display: flex; align-items: center; gap: 0.4rem;
+  }
+  .btn-settings:hover { background: rgba(255,255,255,0.2); }
+
+  /* ── PRACTICE BANNER (shown when profile set) ── */
+  #practice-banner {
+    background: var(--blush); border-bottom: 1px solid var(--mauve);
+    padding: 0.75rem 2.5rem; font-size: 0.82rem; color: var(--muted);
+    display: none; align-items: center; gap: 0.5rem; flex-wrap: wrap;
+  }
+  #practice-banner.visible { display: flex; }
+  #practice-banner strong { color: var(--deep); }
+  .banner-sep { color: var(--mauve); }
+
+  /* ── LAYOUT ── */
+  .app-body { display: grid; grid-template-columns: 250px 1fr; min-height: calc(100vh - 57px); }
+
+  /* ── SIDEBAR ── */
+  nav {
+    background: white; border-right: 1px solid var(--blush);
+    padding: 1.25rem 0; position: sticky; top: 57px;
+    height: calc(100vh - 57px); overflow-y: auto;
+  }
+  .nav-section-title {
+    font-size: 0.63rem; font-weight: 700; letter-spacing: 0.15em;
+    text-transform: uppercase; color: var(--mauve); padding: 1rem 1.5rem 0.4rem;
+    display: block;
+  }
+  .nav-item {
+    display: flex; align-items: center; gap: 0.65rem;
+    padding: 0.6rem 1.5rem; cursor: pointer; transition: all 0.15s;
+    border-left: 3px solid transparent; font-size: 0.845rem; color: var(--muted); line-height: 1.3;
+  }
+  .nav-item:hover { background: var(--cream); color: var(--deep); }
+  .nav-item.active { background: var(--cream); border-left-color: var(--rust); color: var(--deep); font-weight: 700; }
+  .nav-icon { font-size: 0.95rem; flex-shrink: 0; }
+
+  /* ── MAIN ── */
+  main { padding: 2.5rem; max-width: 760px; }
+
+  /* ── WELCOME ── */
+  .welcome { padding: 0.5rem 0 3rem; }
+  .welcome h1 { font-family: 'Bodoni Moda', serif; font-size: 2.2rem; color: var(--deep); line-height: 1.2; margin-bottom: 0.9rem; }
+  .welcome h1 em { color: var(--rust); font-style: italic; }
+  .welcome > p { color: var(--muted); font-size: 0.95rem; line-height: 1.7; max-width: 540px; margin-bottom: 2rem; }
+
+  .setup-prompt {
+    background: var(--deep); border-radius: 8px; padding: 1.5rem;
+    display: flex; align-items: center; gap: 1.25rem; margin-bottom: 2.5rem;
+  }
+  .setup-prompt-icon { font-size: 2rem; flex-shrink: 0; }
+  .setup-prompt h3 { font-family: 'Bodoni Moda', serif; color: var(--blush); font-size: 1rem; margin-bottom: 0.3rem; }
+  .setup-prompt p { color: var(--mauve); font-size: 0.82rem; line-height: 1.5; }
+  .btn-setup-open {
+    margin-left: auto; background: var(--terra); color: white; border: none;
+    padding: 0.65rem 1.25rem; border-radius: 5px; font-family: 'Lato', sans-serif;
+    font-size: 0.82rem; font-weight: 700; cursor: pointer; white-space: nowrap; transition: background 0.15s;
+  }
+  .btn-setup-open:hover { background: var(--rust); }
+
+  .category-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 1rem; }
+  .category-card {
+    background: white; border: 1px solid var(--blush); border-radius: 8px;
+    padding: 1.4rem; cursor: pointer; transition: all 0.2s; border-top: 3px solid var(--blush);
+  }
+  .category-card:hover { border-top-color: var(--rust); box-shadow: 0 4px 20px rgba(100,59,51,0.1); transform: translateY(-2px); }
+  .category-card .icon { font-size: 1.4rem; margin-bottom: 0.65rem; }
+  .category-card h3 { font-family: 'Bodoni Moda', serif; font-size: 0.95rem; color: var(--deep); margin-bottom: 0.3rem; }
+  .category-card p { font-size: 0.77rem; color: var(--muted); line-height: 1.5; }
+
+  /* ── TOOL PANEL ── */
+  .tool-panel { display: none; }
+  .tool-panel.visible { display: block; }
+  .tool-header { margin-bottom: 1.75rem; padding-bottom: 1.5rem; border-bottom: 1px solid var(--blush); }
+  .breadcrumb { font-size: 0.73rem; color: var(--mauve); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 0.7rem; cursor: pointer; }
+  .breadcrumb:hover { color: var(--rust); }
+  .tool-header h2 { font-family: 'Bodoni Moda', serif; font-size: 1.7rem; color: var(--deep); margin-bottom: 0.45rem; }
+  .tool-header p { color: var(--muted); font-size: 0.88rem; line-height: 1.6; }
+
+  /* ── PRE-FILLED NOTICE ── */
+  .prefilled-notice {
+    background: #f0ebe8; border: 1px solid var(--mauve); border-radius: 6px;
+    padding: 0.65rem 1rem; font-size: 0.78rem; color: var(--muted);
+    margin-bottom: 1.25rem; display: none; align-items: center; gap: 0.5rem;
+  }
+  .prefilled-notice.visible { display: flex; }
+  .prefilled-notice a { color: var(--rust); cursor: pointer; text-decoration: underline; }
+
+  /* ── FORM ── */
+  .form-grid { display: flex; flex-direction: column; gap: 1.1rem; margin-bottom: 1.5rem; }
+  .field label { display: block; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--deep); margin-bottom: 0.4rem; }
+  .field label .optional { font-weight: 400; text-transform: none; letter-spacing: 0; color: var(--mauve); font-size: 0.73rem; }
+  .field input, .field textarea, .field select {
+    width: 100%; padding: 0.75rem 1rem; border: 1.5px solid var(--blush);
+    border-radius: 6px; font-family: 'Lato', sans-serif; font-size: 0.88rem;
+    color: var(--text); background: white; outline: none; transition: border-color 0.2s; line-height: 1.5;
+  }
+  .field input:focus, .field textarea:focus, .field select:focus { border-color: var(--rust); }
+  .field textarea { min-height: 90px; resize: vertical; }
+  .field input.prefilled { background: #faf7f5; border-color: var(--mauve); color: var(--muted); }
+
+  .tone-options { display: flex; gap: 0.65rem; flex-wrap: wrap; }
+  .tone-btn {
+    padding: 0.45rem 0.9rem; border: 1.5px solid var(--blush); border-radius: 20px;
+    background: white; font-family: 'Lato', sans-serif; font-size: 0.8rem; color: var(--muted); cursor: pointer; transition: all 0.15s;
+  }
+  .tone-btn:hover { border-color: var(--mauve); color: var(--deep); }
+  .tone-btn.selected { background: var(--deep); border-color: var(--deep); color: white; }
+
+  /* ── BUTTON ── */
+  .btn-generate {
+    background: var(--rust); color: white; border: none; padding: 0.9rem 1.75rem;
+    font-family: 'Lato', sans-serif; font-size: 0.875rem; font-weight: 700;
+    letter-spacing: 0.04em; border-radius: 6px; cursor: pointer; transition: all 0.2s;
+    display: flex; align-items: center; gap: 0.6rem;
+  }
+  .btn-generate:hover { background: var(--deep); transform: translateY(-1px); }
+  .btn-generate:disabled { background: var(--mauve); cursor: not-allowed; transform: none; }
+
+  /* ── OUTPUT ── */
+  .output-section { margin-top: 1.75rem; display: none; }
+  .output-section.visible { display: block; }
+  .output-label { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-bottom: 0.65rem; }
+  .output-box {
+    background: white; border: 1px solid var(--blush); border-radius: 8px;
+    padding: 1.6rem; font-size: 0.9rem; line-height: 1.85; color: var(--text);
+    white-space: pre-wrap; min-height: 100px;
+  }
+  .output-box.loading { color: var(--mauve); font-style: italic; }
+  .output-actions { display: flex; gap: 0.75rem; margin-top: 0.9rem; flex-wrap: wrap; align-items: center; }
+  .btn-copy, .btn-regen {
+    padding: 0.55rem 1.1rem; border-radius: 5px; font-family: 'Lato', sans-serif;
+    font-size: 0.8rem; font-weight: 700; cursor: pointer; transition: all 0.15s; letter-spacing: 0.04em;
+  }
+  .btn-copy { background: var(--deep); color: white; border: none; }
+  .btn-copy:hover { background: var(--text); }
+  .btn-regen { background: transparent; color: var(--rust); border: 1.5px solid var(--rust); }
+  .btn-regen:hover { background: var(--rust); color: white; }
+  .copy-confirm { font-size: 0.78rem; color: var(--terra); display: none; align-items: center; gap: 0.4rem; }
+
+  .spinner { display: inline-block; width: 15px; height: 15px; border: 2px solid rgba(255,255,255,0.35); border-top-color: white; border-radius: 50%; animation: spin 0.7s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  @media (max-width: 680px) {
+    .app-body { grid-template-columns: 1fr; }
+    nav { position: static; height: auto; border-right: none; border-bottom: 1px solid var(--blush); }
+    main { padding: 1.5rem; }
+    header { padding: 1rem 1.5rem; }
+    .setup-row { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════
+     SETUP OVERLAY
+══════════════════════════════════════════ -->
+<div id="setup-overlay" class="hidden">
+  <div class="setup-modal">
+    <div class="setup-header">
+      <h2>Set up your practice profile</h2>
+      <p>This takes about 2 minutes. Every email you generate will be personalised with your details — you won't need to fill them in each time.</p>
+      <div class="setup-progress">
+        <div class="setup-progress-step active" id="prog-0"></div>
+        <div class="setup-progress-step" id="prog-1"></div>
+        <div class="setup-progress-step" id="prog-2"></div>
+        <div class="setup-progress-step" id="prog-3"></div>
+        <div class="setup-progress-step" id="prog-4"></div>
+      </div>
+    </div>
+
+    <div class="setup-body">
+
+      <!-- Section 0: About You -->
+      <div class="setup-section active" id="setup-sec-0">
+        <div class="setup-section-title">About you</div>
+        <div class="setup-section-sub">The basics that appear in every email.</div>
+        <div class="setup-fields">
+          <div class="setup-field"><label>Your first name</label><input type="text" id="s-name" placeholder="e.g. Sarah"></div>
+          <div class="setup-field"><label>Practice name <span class="opt">(optional)</span></label><input type="text" id="s-practice" placeholder="e.g. Bloom Therapy"></div>
+          <div class="setup-field"><label>How you sign off emails</label><input type="text" id="s-signoff" placeholder="e.g. Warm wishes, Sarah  /  With care, Sarah  /  Kind regards, Sarah"></div>
+        </div>
+      </div>
+
+      <!-- Section 1: How You Work -->
+      <div class="setup-section" id="setup-sec-1">
+        <div class="setup-section-title">How you work</div>
+        <div class="setup-section-sub">This shapes session reminders, welcome emails, and confirmations.</div>
+        <div class="setup-fields">
+          <div class="setup-field"><label>Session format</label>
+            <select id="s-format">
+              <option value="online">Online only</option>
+              <option value="inperson">In person only</option>
+              <option value="both">Both online and in person</option>
+            </select>
+          </div>
+          <div class="setup-field"><label>Platform / location <span class="opt">(optional)</span></label><input type="text" id="s-location" placeholder="e.g. Zoom (link shared before sessions) / 12 High Street, Bristol"></div>
+          <div class="setup-field"><label>Session length</label>
+            <select id="s-length">
+              <option value="50 minutes">50 minutes</option>
+              <option value="60 minutes">60 minutes</option>
+              <option value="90 minutes">90 minutes</option>
+              <option value="50 or 90 minutes depending on the session">50 or 90 minutes</option>
+            </select>
+          </div>
+          <div class="setup-field"><label>Typical working days / times <span class="opt">(optional)</span></label><input type="text" id="s-days" placeholder="e.g. Mondays 9am–1pm, Thursdays 2pm–6pm"></div>
+          <div class="setup-field"><label>Do you offer a free screening call?</label>
+            <select id="s-screening">
+              <option value="yes">Yes — I offer a free 15-minute screening call</option>
+              <option value="no">No — I go straight to a first session</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 2: Fees & Payments -->
+      <div class="setup-section" id="setup-sec-2">
+        <div class="setup-section-title">Fees & payments</div>
+        <div class="setup-section-sub">So your invoices, payment chasers, and fee increase letters are ready to go.</div>
+        <div class="setup-fields">
+          <div class="setup-field"><label>Your session fee</label><input type="text" id="s-fee" placeholder="e.g. £85 per 50-minute session"></div>
+          <div class="setup-field"><label>How you invoice</label>
+            <select id="s-invoice-freq">
+              <option value="per session">Per session</option>
+              <option value="monthly">Monthly</option>
+              <option value="per session or monthly depending on the client">Either — depends on the client</option>
+            </select>
+          </div>
+          <div class="setup-field"><label>Payment method</label>
+            <select id="s-payment-method">
+              <option value="BACS bank transfer">BACS bank transfer</option>
+              <option value="PayPal">PayPal</option>
+              <option value="Stripe / card payment">Stripe / card payment</option>
+              <option value="Cash">Cash</option>
+              <option value="BACS or PayPal">BACS or PayPal</option>
+            </select>
+          </div>
+          <div class="setup-field"><label>Bank details or payment link <span class="opt">(optional — you can add per-email if preferred)</span></label><input type="text" id="s-bank" placeholder="e.g. Sort: 12-34-56, Acc: 12345678  /  paypal.me/yourname"></div>
+          <div class="setup-field"><label>Payment due within</label>
+            <select id="s-payment-due">
+              <option value="24 hours of the session">24 hours of the session</option>
+              <option value="48 hours of the session">48 hours of the session</option>
+              <option value="7 days">7 days</option>
+              <option value="14 days">14 days</option>
+              <option value="by the end of the month">End of month</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 3: Cancellation Policy -->
+      <div class="setup-section" id="setup-sec-3">
+        <div class="setup-section-title">Cancellation policy</div>
+        <div class="setup-section-sub">Used in session reminders, welcome emails, and boundary-setting communications.</div>
+        <div class="setup-fields">
+          <div class="setup-field"><label>Notice required for cancellations</label>
+            <select id="s-cancel-notice">
+              <option value="24 hours">24 hours</option>
+              <option value="48 hours">48 hours</option>
+              <option value="72 hours">72 hours (3 days)</option>
+              <option value="1 week">1 week</option>
+            </select>
+          </div>
+          <div class="setup-field"><label>Late cancellation charge</label>
+            <select id="s-cancel-charge">
+              <option value="the full session fee is charged">Full session fee charged</option>
+              <option value="50% of the session fee is charged">50% of session fee charged</option>
+              <option value="no charge for the first late cancellation, then the full fee thereafter">First time free, then full fee</option>
+              <option value="no charge — I use my discretion">No charge — I use my discretion</option>
+            </select>
+          </div>
+          <div class="setup-field"><label>Exceptions <span class="opt">(optional)</span></label><input type="text" id="s-cancel-exceptions" placeholder="e.g. genuine emergencies at my discretion"></div>
+        </div>
+      </div>
+
+      <!-- Section 4: Your Practice -->
+      <div class="setup-section" id="setup-sec-4">
+        <div class="setup-section-title">Your practice</div>
+        <div class="setup-section-sub">Helps the AI write emails that sound like you and reflect your approach.</div>
+        <div class="setup-fields">
+          <div class="setup-field"><label>What you specialise in / who you work with <span class="opt">(optional)</span></label><input type="text" id="s-specialism" placeholder="e.g. anxiety, trauma, life transitions, women in midlife"></div>
+          <div class="setup-field"><label>Therapeutic approach <span class="opt">(optional)</span></label><input type="text" id="s-approach" placeholder="e.g. integrative, person-centred, EMDR, CBT"></div>
+          <div class="setup-field"><label>Anything else that should shape how your emails sound? <span class="opt">(optional)</span></label><textarea id="s-voice" placeholder="e.g. I'm quite warm and informal. I don't like emails that sound corporate. I often work with people who are nervous about starting therapy."></textarea></div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="setup-footer">
+      <button class="btn-setup-back" id="setup-back-btn" onclick="setupBack()" style="visibility:hidden">← Back</button>
+      <button class="setup-skip" onclick="skipSetup()">Skip for now</button>
+      <button class="btn-setup-next" id="setup-next-btn" onclick="setupNext()">Next →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     MAIN APP
+══════════════════════════════════════════ -->
+<header>
+  <div class="logo">
+    Prosper in Private Practice
+    <span>Practice Admin Assistant</span>
+  </div>
+  <div class="header-actions">
+    <button class="btn-settings" onclick="openSetup(true)">⚙ Practice settings</button>
+  </div>
+</header>
+
+<div id="practice-banner">
+  <strong id="banner-name"></strong>
+  <span class="banner-sep">·</span>
+  <span id="banner-fee"></span>
+  <span class="banner-sep">·</span>
+  <span id="banner-cancel"></span>
+  <span class="banner-sep">·</span>
+  <a onclick="openSetup(true)" style="color:var(--rust);cursor:pointer;text-decoration:underline;font-size:0.78rem;">Edit profile</a>
+</div>
+
+<div class="app-body">
+  <nav>
+    <span class="nav-section-title">Client Enquiries</span>
+    <div class="nav-item" onclick="showTool('available')" id="nav-available"><span class="nav-icon">📬</span> I have availability</div>
+    <div class="nav-item" onclick="showTool('noavail')" id="nav-noavail"><span class="nav-icon">📭</span> I'm fully booked</div>
+    <div class="nav-item" onclick="showTool('waitlist')" id="nav-waitlist"><span class="nav-icon">⏳</span> Offer a waitlist</div>
+    <span class="nav-section-title">Onboarding</span>
+    <div class="nav-item" onclick="showTool('screening')" id="nav-screening"><span class="nav-icon">📞</span> Screening call confirmation</div>
+    <div class="nav-item" onclick="showTool('welcome')" id="nav-welcome"><span class="nav-icon">🌿</span> Welcome new client</div>
+    <span class="nav-section-title">Ongoing Practice</span>
+    <div class="nav-item" onclick="showTool('reminder')" id="nav-reminder"><span class="nav-icon">🗓</span> Session reminder</div>
+    <div class="nav-item" onclick="showTool('invoice')" id="nav-invoice"><span class="nav-icon">💳</span> Invoice & payment</div>
+    <div class="nav-item" onclick="showTool('missed')" id="nav-missed"><span class="nav-icon">⚠️</span> Missed payment</div>
+    <span class="nav-section-title">Endings</span>
+    <div class="nav-item" onclick="showTool('offboard')" id="nav-offboard"><span class="nav-icon">🌸</span> End of therapy</div>
+    <span class="nav-section-title">Tricky Conversations</span>
+    <div class="nav-item" onclick="showTool('feeincrease')" id="nav-feeincrease"><span class="nav-icon">💷</span> Fee increase</div>
+    <div class="nav-item" onclick="showTool('boundary')" id="nav-boundary"><span class="nav-icon">🛡</span> Setting a boundary</div>
+    <div class="nav-item" onclick="showTool('cancellation')" id="nav-cancellation"><span class="nav-icon">📋</span> Cancellation policy</div>
+    <div class="nav-item" onclick="showTool('referral')" id="nav-referral"><span class="nav-icon">🤝</span> Referral / not right fit</div>
+    <div class="nav-item" onclick="showTool('latepayment')" id="nav-latepayment"><span class="nav-icon">📩</span> Late payment escalation</div>
+  </nav>
+
+  <main id="main-content">
+
+    <!-- WELCOME -->
+    <div id="screen-welcome" class="welcome">
+      <h1>Less admin.<br><em>More practice.</em></h1>
+      <p>Choose a task from the menu to generate a personalised, ready-to-send email. Set up your practice profile once and every email will already know your fees, cancellation policy, and how you work.</p>
+
+      <div class="setup-prompt" id="setup-prompt-card">
+        <div class="setup-prompt-icon">✏️</div>
+        <div>
+          <h3>Set up your practice profile</h3>
+          <p>Takes 2 minutes. Every email personalised from the start.</p>
+        </div>
+        <button class="btn-setup-open" onclick="openSetup(false)">Set up now →</button>
+      </div>
+
+      <div class="category-grid">
+        <div class="category-card" onclick="showTool('available')"><div class="icon">📬</div><h3>Enquiry Responses</h3><p>Available, fully booked, or waitlist.</p></div>
+        <div class="category-card" onclick="showTool('welcome')"><div class="icon">🌿</div><h3>Client Onboarding</h3><p>Screening confirmations and welcome emails.</p></div>
+        <div class="category-card" onclick="showTool('feeincrease')"><div class="icon">💷</div><h3>Fee Increase</h3><p>The email therapists dread. Done in minutes.</p></div>
+        <div class="category-card" onclick="showTool('boundary')"><div class="icon">🛡</div><h3>Tricky Conversations</h3><p>Boundaries, late payments, referrals.</p></div>
+        <div class="category-card" onclick="showTool('offboard')"><div class="icon">🌸</div><h3>Endings</h3><p>A thoughtful end-of-therapy email.</p></div>
+        <div class="category-card" onclick="showTool('cancellation')"><div class="icon">📋</div><h3>Cancellation Policy</h3><p>Generate or update yours now.</p></div>
+      </div>
+    </div>
+
+    <!-- ══ TOOL PANELS ══ -->
+
+    <!-- available -->
+    <div id="tool-available" class="tool-panel">
+      <div class="tool-header"><div class="breadcrumb" onclick="showWelcome()">← Back</div><h2>New Enquiry — I Have Availability</h2><p>A warm, clear response that moves them towards booking.</p></div>
+      <div class="prefilled-notice" id="pf-available">✓ Pre-filled from your practice profile. <a onclick="openSetup(true)">Edit profile</a></div>
+      <div class="form-grid">
+        <div class="field"><label>Enquirer's name</label><input type="text" id="avail-name" placeholder="e.g. Emma"></div>
+        <div class="field"><label>What did they enquire about?</label><input type="text" id="avail-issue" placeholder="e.g. anxiety, relationship difficulties"></div>
+        <div class="field"><label>Available days/times <span class="optional">(pre-filled from profile)</span></label><input type="text" id="avail-times" placeholder="e.g. Tuesdays 10am–2pm"></div>
+        <div class="field"><label>Fee <span class="optional">(pre-filled from profile)</span></label><input type="text" id="avail-fee" placeholder="e.g. £85 per session"></div>
+        <div class="field"><label>Tone</label><div class="tone-options" id="tone-avail"><button class="tone-btn selected" onclick="selectTone('avail','warm')">Warm & welcoming</button><button class="tone-btn" onclick="selectTone('avail','professional')">Professional</button><button class="tone-btn" onclick="selectTone('avail','concise')">Brief & clear</button></div></div>
+      </div>
+      <button class="btn-generate" onclick="generate('available')"><span id="btn-available-text">Generate email</span><span id="btn-available-spin" class="spinner" style="display:none"></span></button>
+      <div class="output-section" id="out-available"><div class="output-label">Your personalised email</div><div class="output-box" id="outbox-available"></div><div class="output-actions"><button class="btn-copy" onclick="copyOutput('available')">Copy to clipboard</button><button class="btn-regen" onclick="generate('available')">Regenerate</button><span class="copy-confirm" id="copied-available">✓ Copied!</span></div></div>
+    </div>
+
+    <!-- noavail -->
+    <div id="tool-noavail" class="tool-panel">
+      <div class="tool-header"><div class="breadcrumb" onclick="showWelcome()">← Back</div><h2>New Enquiry — I'm Fully Booked</h2><p>Honest and kind, even when you can't help right now.</p></div>
+      <div class="prefilled-notice" id="pf-noavail">✓ Pre-filled from your practice profile. <a onclick="openSetup(true)">Edit profile</a></div>
+      <div class="form-grid">
+        <div class="field"><label>Enquirer's name</label><input type="text" id="noavail-name" placeholder="e.g. James"></div>
+        <div class="field"><label>Waitlist situation</label><select id="noavail-waitlist"><option value="no">No waitlist — signposting elsewhere</option><option value="yes">Yes — I have a waitlist</option><option value="maybe">Possibly space in a few months</option></select></div>
+        <div class="field"><label>Resources to signpost <span class="optional">(optional)</span></label><input type="text" id="noavail-signpost" placeholder="e.g. BACP directory, Psychology Today"></div>
+        <div class="field"><label>Tone</label><div class="tone-options" id="tone-noavail"><button class="tone-btn selected" onclick="selectTone('noavail','warm')">Warm & caring</button><button class="tone-btn" onclick="selectTone('noavail','professional')">Professional</button><button class="tone-btn" onclick="selectTone('noavail','brief')">Brief</button></div></div>
+      </div>
+      <button class="btn-generate" onclick="generate('noavail')"><span id="btn-noavail-text">Generate email</span><span id="btn-noavail-spin" class="spinner" style="display:none"></span></button>
+      <div class="output-section" id="out-noavail"><div class="output-label">Your personalised email</div><div class="output-box" id="outbox-noavail"></div><div class="output-actions"><button class="btn-copy" onclick="copyOutput('noavail')">Copy to clipboard</button><button class="btn-regen" onclick="generate('noavail')">Regenerate</button><span class="copy-confirm" id="copied-noavail">✓ Copied!</span></div></div>
+    </div>
+
+    <!-- waitlist -->
+    <div id="tool-waitlist" class="tool-panel">
+      <div class="tool-header"><div class="breadcrumb" onclick="showWelcome()">← Back</div><h2>New Enquiry — Offer a Waitlist</h2><p>Keep them warm without over-promising.</p></div>
+      <div class="form-grid">
+        <div class="field"><label>Enquirer's name</label><input type="text" id="wait-name" placeholder="e.g. Priya"></div>
+        <div class="field"><label>Rough timeframe <span class="optional">(optional)</span></label><input type="text" id="wait-timeframe" placeholder="e.g. 6–8 weeks, early spring"></div>
+        <div class="field"><label>What they're seeking help with <span class="optional">(optional)</span></label><input type="text" id="wait-issue" placeholder="e.g. grief, burnout"></div>
+        <div class="field"><label>Tone</label><div class="tone-options" id="tone-wait"><button class="tone-btn selected" onclick="selectTone('wait','warm')">Warm & hopeful</button><button class="tone-btn" onclick="selectTone('wait','professional')">Professional</button></div></div>
+      </div>
+      <button class="btn-generate" onclick="generate('waitlist')"><span id="btn-waitlist-text">Generate email</span><span id="btn-waitlist-spin" class="spinner" style="display:none"></span></button>
+      <div class="output-section" id="out-waitlist"><div class="output-label">Your personalised email</div><div class="output-box" id="outbox-waitlist"></div><div class="output-actions"><button class="btn-copy" onclick="copyOutput('waitlist')">Copy to clipboard</button><button class="btn-regen" onclick="generate('waitlist')">Regenerate</button><span class="copy-confirm" id="copied-waitlist">✓ Copied!</span></div></div>
+    </div>
+
+    <!-- screening -->
+    <div id="tool-screening" class="tool-panel">
+      <div class="tool-header"><div class="breadcrumb" onclick="showWelcome()">← Back</div><h2>Screening Call Confirmation</h2><p>Confirm the details and set a warm tone before you've even spoken.</p></div>
+      <div class="prefilled-notice" id="pf-screening">✓ Pre-filled from your practice profile. <a onclick="openSetup(true)">Edit profile</a></div>
+      <div class="form-grid">
+        <div class="field"><label>Client's name</label><input type="text" id="screen-name" placeholder="e.g. Tom"></div>
+        <div class="field"><label>Date & time of the call</label><input type="text" id="screen-datetime" placeholder="e.g. Thursday 15th May at 11am"></div>
+        <div class="field"><label>How the call takes place</label><select id="screen-method"><option>Phone call — I'll call them</option><option>Phone call — they'll call me</option><option>Zoom / video call</option><option>Google Meet</option></select></div>
+        <div class="field"><label>Call link or number <span class="optional">(optional)</span></label><input type="text" id="screen-link" placeholder="e.g. zoom link or your number"></div>
+      </div>
+      <button class="btn-generate" onclick="generate('screening')"><span id="btn-screening-text">Generate email</span><span id="btn-screening-spin" class="spinner" style="display:none"></span></button>
+      <div class="output-section" id="out-screening"><div class="output-label">Your personalised email</div><div class="output-box" id="outbox-screening"></div><div class="output-actions"><button class="btn-copy" onclick="copyOutput('screening')">Copy to clipboard</button><button class="btn-regen" onclick="generate('screening')">Regenerate</button><span class="copy-confirm" id="copied-screening">✓ Copied!</span></div></div>
+    </div>
+
+    <!-- welcome -->
+    <div id="tool-welcome" class="tool-panel">
+      <div class="tool-header"><div class="breadcrumb" onclick="showWelcome()">← Back</div><h2>Welcome New Client</h2><p>Their first session is booked. Set the tone from the very start.</p></div>
+      <div class="prefilled-notice" id="pf-welcome">✓ Pre-filled from your practice profile. <a onclick="openSetup(true)">Edit profile</a></div>
+      <div class="form-grid">
+        <div class="field"><label>Client's name</label><input type="text" id="wc-name" placeholder="e.g. Leila"></div>
+        <div class="field"><label>First session date & time</label><input type="text" id="wc-date" placeholder="e.g. Monday 19th May at 2pm"></div>
+        <div class="field"><label>Session format <span class="optional">(pre-filled from profile)</span></label><input type="text" id="wc-format" placeholder="e.g. Online via Zoom"></div>
+        <div class="field"><label>Location or link <span class="optional">(pre-filled from profile)</span></label><input type="text" id="wc-location" placeholder="e.g. Zoom link or practice address"></div>
+        <div class="field"><label>Anything extra to include? <span class="optional">(optional)</span></label><textarea id="wc-notes" placeholder="e.g. paperwork to complete, parking info"></textarea></div>
+      </div>
+      <button class="btn-generate" onclick="generate('welcome')"><span id="btn-welcome-text">Generate email</span><span id="btn-welcome-spin" class="spinner" style="display:none"></span></button>
+      <div class="output-section" id="out-welcome"><div class="output-label">Your personalised email</div><div class="output-box" id="outbox-welcome"></div><div class="output-actions"><button class="btn-copy" onclick="copyOutput('welcome')">Copy to clipboard</button><button class="btn-regen" onclick="generate('welcome')">Regenerate</button><span class="copy-confirm" id="copied-welcome">✓ Copied!</span></div></div>
+    </div>
+
+    <!-- reminder -->
+    <div id="tool-reminder" class="tool-panel">
+      <div class="tool-header"><div class="breadcrumb" onclick="showWelcome()">← Back</div><h2>Session Reminder</h2><p>A friendly nudge that reduces no-shows without feeling clinical.</p></div>
+      <div class="prefilled-notice" id="pf-reminder">✓ Pre-filled from your practice profile. <a onclick="openSetup(true)">Edit profile</a></div>
+      <div class="form-grid">
+        <div class="field"><label>Client's name</label><input type="text" id="rem-name" placeholder="e.g. Alex"></div>
+        <div class="field"><label>Session date & time</label><input type="text" id="rem-date" placeholder="e.g. tomorrow, Tuesday 20th May at 3pm"></div>
+        <div class="field"><label>Session format <span class="optional">(pre-filled)</span></label><input type="text" id="rem-format" placeholder="e.g. Online via Zoom"></div>
+        <div class="field"><label>Location or link <span class="optional">(pre-filled)</span></label><input type="text" id="rem-location" placeholder="e.g. zoom link or address"></div>
+        <div class="field"><label>Anything extra? <span class="optional">(optional)</span></label><input type="text" id="rem-extra" placeholder="e.g. cancellation notice reminder"></div>
+      </div>
+      <button class="btn-generate" onclick="generate('reminder')"><span id="btn-reminder-text">Generate email</span><span id="btn-reminder-spin" class="spinner" style="display:none"></span></button>
+      <div class="output-section" id="out-reminder"><div class="output-label">Your personalised email</div><div class="output-box" id="outbox-reminder"></div><div class="output-actions"><button class="btn-copy" onclick="copyOutput('reminder')">Copy to clipboard</button><button class="btn-regen" onclick="generate('reminder')">Regenerate</button><span class="copy-confirm" id="copied-reminder">✓ Copied!</span></div></div>
+    </div>
+
+    <!-- invoice -->
+    <div id="tool-invoice" class="tool-panel">
+      <div class="tool-header"><div class="breadcrumb" onclick="showWelcome()">← Back</div><h2>Invoice & Payment Request</h2><p>Professional and clear — makes it easy for them to pay.</p></div>
+      <div class="prefilled-notice" id="pf-invoice">✓ Pre-filled from your practice profile. <a onclick="openSetup(true)">Edit profile</a></div>
+      <div class="form-grid">
+        <div class="field"><label>Client's name</label><input type="text" id="inv-name" placeholder="e.g. Rachel"></div>
+        <div class="field"><label>Amount & period</label><input type="text" id="inv-amount" placeholder="e.g. £85 for session on 12th May, or £340 for April sessions"></div>
+        <div class="field"><label>Payment method <span class="optional">(pre-filled)</span></label><input type="text" id="inv-method" placeholder="e.g. BACS bank transfer"></div>
+        <div class="field"><label>Payment due <span class="optional">(pre-filled)</span></label><input type="text" id="inv-due" placeholder="e.g. within 7 days"></div>
+        <div class="field"><label>Bank details or payment link <span class="optional">(pre-filled)</span></label><input type="text" id="inv-details" placeholder="e.g. Sort: 12-34-56, Acc: 12345678"></div>
+      </div>
+      <button class="btn-generate" onclick="generate('invoice')"><span id="btn-invoice-text">Generate email</span><span id="btn-invoice-spin" class="spinner" style="display:none"></span></button>
+      <div class="output-section" id="out-invoice"><div class="output-label">Your personalised email</div><div class="output-box" id="outbox-invoice"></div><div class="output-actions"><button class="btn-copy" onclick="copyOutput('invoice')">Copy to clipboard</button><button class="btn-regen" onclick="generate('invoice')">Regenerate</button><span class="copy-confirm" id="copied-invoice">✓ Copied!</span></div></div>
+    </div>
+
+    <!-- missed -->
+    <div id="tool-missed" class="tool-panel">
+      <div class="tool-header"><div class="breadcrumb" onclick="showWelcome()">← Back</div><h2>Missed Payment Follow-Up</h2><p>Warm but clear. No awkwardness, no over-apologising.</p></div>
+      <div class="prefilled-notice" id="pf-missed">✓ Pre-filled from your practice profile. <a onclick="openSetup(true)">Edit profile</a></div>
+      <div class="form-grid">
+        <div class="field"><label>Client's name</label><input type="text" id="miss-name" placeholder="e.g. Dan"></div>
+        <div class="field"><label>Amount outstanding</label><input type="text" id="miss-amount" placeholder="e.g. £85 for the session on 5th May"></div>
+        <div class="field"><label>How overdue?</label><select id="miss-overdue"><option>A few days</option><option>About a week</option><option>Two weeks or more</option></select></div>
+        <div class="field"><label>Payment method <span class="optional">(pre-filled)</span></label><input type="text" id="miss-method" placeholder="e.g. BACS"></div>
+        <div class="field"><label>Payment details <span class="optional">(pre-filled)</span></label><input type="text" id="miss-details" placeholder="e.g. Sort: 12-34-56, Acc: 12345678"></div>
+      </div>
+      <button class="btn-generate" onclick="generate('missed')"><span id="btn-missed-text">Generate email</span><span id="btn-missed-spin" class="spinner" style="display:none"></span></button>
+      <div class="output-section" id="out-missed"><div class="output-label">Your personalised email</div><div class="output-box" id="outbox-missed"></div><div class="output-actions"><button class="btn-copy" onclick="copyOutput('missed')">Copy to clipboard</button><button class="btn-regen" onclick="generate('missed')">Regenerate</button><span class="copy-confirm" id="copied-missed">✓ Copied!</span></div></div>
+    </div>
+
+    <!-- offboard -->
+    <div id="tool-offboard" class="tool-panel">
+      <div class="tool-header"><div class="breadcrumb" onclick="showWelcome()">← Back</div><h2>End of Therapy Email</h2><p>Genuine, warm, and considered. Honour the relationship without being formulaic.</p></div>
+      <div class="form-grid">
+        <div class="field"><label>Client's name</label><input type="text" id="off-name" placeholder="e.g. Sophie"></div>
+        <div class="field"><label>How is therapy ending?</label><select id="off-reason"><option>Planned — we agreed this is the right time</option><option>Client's decision — they feel ready</option><option>Natural conclusion after fixed sessions</option><option>Mutual agreement to pause</option></select></div>
+        <div class="field"><label>Anything specific to acknowledge? <span class="optional">(optional)</span></label><textarea id="off-notes" placeholder="e.g. the progress they made, themes you worked on, their courage"></textarea></div>
+        <div class="field"><label>Mention returning?</label><select id="off-return"><option value="">Don't mention it</option><option value="yes">Yes — the door is open if they need support again</option><option value="pause">Yes — we're pausing, not ending</option></select></div>
+      </div>
+      <button class="btn-generate" onclick="generate('offboard')"><span id="btn-offboard-text">Generate email</span><span id="btn-offboard-spin" class="spinner" style="display:none"></span></button>
+      <div class="output-section" id="out-offboard"><div class="output-label">Your personalised email</div><div class="output-box" id="outbox-offboard"></div><div class="output-actions"><button class="btn-copy" onclick="copyOutput('offboard')">Copy to clipboard</button><button class="btn-regen" onclick="generate('offboard')">Regenerate</button><span class="copy-confirm" id="copied-offboard">✓ Copied!</span></div></div>
+    </div>
+
+    <!-- feeincrease -->
+    <div id="tool-feeincrease" class="tool-panel">
+      <div class="tool-header"><div class="breadcrumb" onclick="showWelcome()">← Back</div><h2>Fee Increase Letter</h2><p>The email most therapists dread. Clear, kind, and professional — in minutes.</p></div>
+      <div class="prefilled-notice" id="pf-feeincrease">✓ Current fee pre-filled from your practice profile. <a onclick="openSetup(true)">Edit profile</a></div>
+      <div class="form-grid">
+        <div class="field"><label>Client's name <span class="optional">(or leave blank for a general template)</span></label><input type="text" id="fee-name" placeholder="e.g. Michael — or leave blank"></div>
+        <div class="field"><label>Current fee <span class="optional">(pre-filled)</span></label><input type="text" id="fee-current" placeholder="e.g. £85 per session"></div>
+        <div class="field"><label>New fee</label><input type="text" id="fee-new" placeholder="e.g. £95 per session"></div>
+        <div class="field"><label>Effective from</label><input type="text" id="fee-date" placeholder="e.g. 1st September 2025"></div>
+        <div class="field"><label>Notice you're giving</label><input type="text" id="fee-notice" placeholder="e.g. 6 weeks notice"></div>
+        <div class="field"><label>Reason <span class="optional">(optional — you don't have to give one)</span></label><input type="text" id="fee-reason" placeholder="e.g. annual review, cost of living, ongoing CPD"></div>
+      </div>
+      <button class="btn-generate" onclick="generate('feeincrease')"><span id="btn-feeincrease-text">Generate letter</span><span id="btn-feeincrease-spin" class="spinner" style="display:none"></span></button>
+      <div class="output-section" id="out-feeincrease"><div class="output-label">Your personalised letter</div><div class="output-box" id="outbox-feeincrease"></div><div class="output-actions"><button class="btn-copy" onclick="copyOutput('feeincrease')">Copy to clipboard</button><button class="btn-regen" onclick="generate('feeincrease')">Regenerate</button><span class="copy-confirm" id="copied-feeincrease">✓ Copied!</span></div></div>
+    </div>
+
+    <!-- boundary -->
+    <div id="tool-boundary" class="tool-panel">
+      <div class="tool-header"><div class="breadcrumb" onclick="showWelcome()">← Back</div><h2>Setting a Boundary</h2><p>Firm, caring, and clearly worded — without over-explaining or over-apologising.</p></div>
+      <div class="form-grid">
+        <div class="field"><label>Client's name <span class="optional">(optional)</span></label><input type="text" id="bnd-name" placeholder="e.g. Kate"></div>
+        <div class="field"><label>What boundary needs setting?</label>
+          <select id="bnd-type">
+            <option value="contact">Contact outside sessions (texting, calling between appointments)</option>
+            <option value="lateness">Persistent lateness to sessions</option>
+            <option value="cancellations">Repeated late cancellations</option>
+            <option value="payments">Not paying on time</option>
+            <option value="scope">Asking for something outside the scope of therapy</option>
+            <option value="other">Other — I'll describe it below</option>
+          </select>
+        </div>
+        <div class="field"><label>Describe the situation <span class="optional">(optional — adds specificity)</span></label><textarea id="bnd-situation" placeholder="e.g. They've been texting between sessions asking for support. I want to be kind but clear."></textarea></div>
+        <div class="field"><label>Tone</label><div class="tone-options" id="tone-bnd"><button class="tone-btn selected" onclick="selectTone('bnd','warm')">Warm but clear</button><button class="tone-btn" onclick="selectTone('bnd','direct')">Direct & firm</button><button class="tone-btn" onclick="selectTone('bnd','gentle')">Very gentle</button></div></div>
+      </div>
+      <button class="btn-generate" onclick="generate('boundary')"><span id="btn-boundary-text">Generate email</span><span id="btn-boundary-spin" class="spinner" style="display:none"></span></button>
+      <div class="output-section" id="out-boundary"><div class="output-label">Your personalised email</div><div class="output-box" id="outbox-boundary"></div><div class="output-actions"><button class="btn-copy" onclick="copyOutput('boundary')">Copy to clipboard</button><button class="btn-regen" onclick="generate('boundary')">Regenerate</button><span class="copy-confirm" id="copied-boundary">✓ Copied!</span></div></div>
+    </div>
+
+    <!-- cancellation -->
+    <div id="tool-cancellation" class="tool-panel">
+      <div class="tool-header"><div class="breadcrumb" onclick="showWelcome()">← Back</div><h2>Cancellation Policy</h2><p>Generate a clear, professional policy — or an email introducing it to existing clients.</p></div>
+      <div class="prefilled-notice" id="pf-cancellation">✓ Pre-filled from your practice profile. <a onclick="openSetup(true)">Edit profile</a></div>
+      <div class="form-grid">
+        <div class="field"><label>Notice required <span class="optional">(pre-filled)</span></label><input type="text" id="can-notice" placeholder="e.g. 48 hours"></div>
+        <div class="field"><label>Late cancellation charge <span class="optional">(pre-filled)</span></label><input type="text" id="can-charge" placeholder="e.g. Full session fee charged"></div>
+        <div class="field"><label>Exceptions <span class="optional">(pre-filled)</span></label><input type="text" id="can-exceptions" placeholder="e.g. genuine emergencies at my discretion"></div>
+        <div class="field"><label>Format</label><div class="tone-options" id="tone-can"><button class="tone-btn selected" onclick="selectTone('can','document')">Standalone policy document</button><button class="tone-btn" onclick="selectTone('can','email')">Email to clients</button></div></div>
+      </div>
+      <button class="btn-generate" onclick="generate('cancellation')"><span id="btn-cancellation-text">Generate policy</span><span id="btn-cancellation-spin" class="spinner" style="display:none"></span></button>
+      <div class="output-section" id="out-cancellation"><div class="output-label">Your cancellation policy</div><div class="output-box" id="outbox-cancellation"></div><div class="output-actions"><button class="btn-copy" onclick="copyOutput('cancellation')">Copy to clipboard</button><button class="btn-regen" onclick="generate('cancellation')">Regenerate</button><span class="copy-confirm" id="copied-cancellation">✓ Copied!</span></div></div>
+    </div>
+
+    <!-- referral -->
+    <div id="tool-referral" class="tool-panel">
+      <div class="tool-header"><div class="breadcrumb" onclick="showWelcome()">← Back</div><h2>Referral — Not the Right Fit</h2><p>Honest, warm, and focused on finding them the right support.</p></div>
+      <div class="form-grid">
+        <div class="field"><label>Client's name</label><input type="text" id="ref-name" placeholder="e.g. Nadia"></div>
+        <div class="field"><label>At what stage?</label><select id="ref-stage"><option>After initial enquiry — before we've met</option><option>After a screening call</option><option>After the first session</option><option>During ongoing therapy</option></select></div>
+        <div class="field"><label>Reason <span class="optional">(internal — won't be stated bluntly in the email)</span></label><select id="ref-reason"><option value="specialism">Outside my specialism</option><option value="intensity">They need more intensive support</option><option value="fit">We're not the right fit therapeutically</option><option value="ethical">Ethical boundary / dual relationship</option><option value="capacity">I don't have capacity</option></select></div>
+        <div class="field"><label>Resources to signpost <span class="optional">(optional)</span></label><input type="text" id="ref-resources" placeholder="e.g. BACP directory, their GP, a specific service"></div>
+      </div>
+      <button class="btn-generate" onclick="generate('referral')"><span id="btn-referral-text">Generate email</span><span id="btn-referral-spin" class="spinner" style="display:none"></span></button>
+      <div class="output-section" id="out-referral"><div class="output-label">Your personalised email</div><div class="output-box" id="outbox-referral"></div><div class="output-actions"><button class="btn-copy" onclick="copyOutput('referral')">Copy to clipboard</button><button class="btn-regen" onclick="generate('referral')">Regenerate</button><span class="copy-confirm" id="copied-referral">✓ Copied!</span></div></div>
+    </div>
+
+    <!-- latepayment -->
+    <div id="tool-latepayment" class="tool-panel">
+      <div class="tool-header"><div class="breadcrumb" onclick="showWelcome()">← Back</div><h2>Late Payment — Escalation</h2><p>You've already asked once. This is the firmer follow-up — professional and unambiguous.</p></div>
+      <div class="prefilled-notice" id="pf-latepayment">✓ Pre-filled from your practice profile. <a onclick="openSetup(true)">Edit profile</a></div>
+      <div class="form-grid">
+        <div class="field"><label>Client's name</label><input type="text" id="late-name" placeholder="e.g. Chris"></div>
+        <div class="field"><label>Amount outstanding</label><input type="text" id="late-amount" placeholder="e.g. £170 for April sessions"></div>
+        <div class="field"><label>How long outstanding?</label><select id="late-duration"><option>2–3 weeks</option><option>About a month</option><option>Over a month</option></select></div>
+        <div class="field"><label>Prior follow-up?</label><select id="late-prior"><option value="yes">Yes — this is my second chase</option><option value="no">No — but it's been a long time</option></select></div>
+        <div class="field"><label>Payment details <span class="optional">(pre-filled)</span></label><input type="text" id="late-method" placeholder="e.g. BACS — Sort: 12-34-56, Acc: 12345678"></div>
+        <div class="field"><label>Deadline to pay by</label><input type="text" id="late-deadline" placeholder="e.g. by Friday 23rd May"></div>
+      </div>
+      <button class="btn-generate" onclick="generate('latepayment')"><span id="btn-latepayment-text">Generate email</span><span id="btn-latepayment-spin" class="spinner" style="display:none"></span></button>
+      <div class="output-section" id="out-latepayment"><div class="output-label">Your personalised email</div><div class="output-box" id="outbox-latepayment"></div><div class="output-actions"><button class="btn-copy" onclick="copyOutput('latepayment')">Copy to clipboard</button><button class="btn-regen" onclick="generate('latepayment')">Regenerate</button><span class="copy-confirm" id="copied-latepayment">✓ Copied!</span></div></div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+// ══════════════════════════════════════════
+// PROFILE STORAGE
+// ══════════════════════════════════════════
+const PROFILE_KEY = 'pipp_practice_profile';
+
+function saveProfile(data) {
+  localStorage.setItem(PROFILE_KEY, JSON.stringify(data));
+}
+
+function loadProfile() {
+  try { return JSON.parse(localStorage.getItem(PROFILE_KEY)) || {}; }
+  catch(e) { return {}; }
+}
+
+function getP() { return loadProfile(); }
+
+// ══════════════════════════════════════════
+// SETUP FLOW
+// ══════════════════════════════════════════
+let setupStep = 0;
+const setupTotal = 5;
+let isEditMode = false;
+
+function openSetup(editMode) {
+  isEditMode = editMode;
+  setupStep = 0;
+  document.getElementById('setup-overlay').classList.remove('hidden');
+  if (editMode) populateSetupFields();
+  renderSetupStep();
+}
+
+function populateSetupFields() {
+  const p = getP();
+  setVal('s-name', p.name);
+  setVal('s-practice', p.practice);
+  setVal('s-signoff', p.signoff);
+  setVal('s-format', p.format);
+  setVal('s-location', p.location);
+  setVal('s-length', p.length);
+  setVal('s-days', p.days);
+  setVal('s-screening', p.screening);
+  setVal('s-fee', p.fee);
+  setVal('s-invoice-freq', p.invoiceFreq);
+  setVal('s-payment-method', p.paymentMethod);
+  setVal('s-bank', p.bank);
+  setVal('s-payment-due', p.paymentDue);
+  setVal('s-cancel-notice', p.cancelNotice);
+  setVal('s-cancel-charge', p.cancelCharge);
+  setVal('s-cancel-exceptions', p.cancelExceptions);
+  setVal('s-specialism', p.specialism);
+  setVal('s-approach', p.approach);
+  setVal('s-voice', p.voice);
+}
+
+function setVal(id, val) {
+  const el = document.getElementById(id);
+  if (el && val) el.value = val;
+}
+
+function renderSetupStep() {
+  document.querySelectorAll('.setup-section').forEach((s, i) => {
+    s.classList.toggle('active', i === setupStep);
+  });
+  for (let i = 0; i < setupTotal; i++) {
+    const el = document.getElementById(`prog-${i}`);
+    if (el) {
+      el.classList.remove('done', 'active');
+      if (i < setupStep) el.classList.add('done');
+      else if (i === setupStep) el.classList.add('active');
+    }
+  }
+  const backBtn = document.getElementById('setup-back-btn');
+  const nextBtn = document.getElementById('setup-next-btn');
+  backBtn.style.visibility = setupStep === 0 ? 'hidden' : 'visible';
+  const isLast = setupStep === setupTotal - 1;
+  nextBtn.textContent = isLast ? (isEditMode ? 'Save changes ✓' : 'Save & start using →') : 'Next →';
+}
+
+function setupNext() {
+  if (setupStep < setupTotal - 1) {
+    setupStep++;
+    renderSetupStep();
+  } else {
+    saveSetupData();
+    closeSetup();
+  }
+}
+
+function setupBack() {
+  if (setupStep > 0) { setupStep--; renderSetupStep(); }
+}
+
+function skipSetup() {
+  document.getElementById('setup-overlay').classList.add('hidden');
+}
+
+function closeSetup() {
+  document.getElementById('setup-overlay').classList.add('hidden');
+  applyProfileToApp();
+}
+
+function saveSetupData() {
+  const p = {
+    name: gv('s-name'),
+    practice: gv('s-practice'),
+    signoff: gv('s-signoff'),
+    format: gv('s-format'),
+    location: gv('s-location'),
+    length: gv('s-length'),
+    days: gv('s-days'),
+    screening: gv('s-screening'),
+    fee: gv('s-fee'),
+    invoiceFreq: gv('s-invoice-freq'),
+    paymentMethod: gv('s-payment-method'),
+    bank: gv('s-bank'),
+    paymentDue: gv('s-payment-due'),
+    cancelNotice: gv('s-cancel-notice'),
+    cancelCharge: gv('s-cancel-charge'),
+    cancelExceptions: gv('s-cancel-exceptions'),
+    specialism: gv('s-specialism'),
+    approach: gv('s-approach'),
+    voice: gv('s-voice'),
+  };
+  saveProfile(p);
+}
+
+function gv(id) {
+  const el = document.getElementById(id);
+  return el ? el.value.trim() : '';
+}
+
+function applyProfileToApp() {
+  const p = getP();
+  if (!p.name) return;
+
+  // Banner
+  const banner = document.getElementById('practice-banner');
+  banner.classList.add('visible');
+  document.getElementById('banner-name').textContent = p.practice ? `${p.name} · ${p.practice}` : p.name;
+  document.getElementById('banner-fee').textContent = p.fee || '';
+  document.getElementById('banner-cancel').textContent = p.cancelNotice ? `${p.cancelNotice} cancellation notice` : '';
+
+  // Hide setup prompt card
+  const card = document.getElementById('setup-prompt-card');
+  if (card) card.style.display = 'none';
+
+  // Pre-fill tool fields
+  prefill('avail-times', p.days);
+  prefill('avail-fee', p.fee);
+  showPF('pf-available');
+
+  showPF('pf-noavail');
+
+  prefill('wc-format', formatLabel(p.format, p.location));
+  prefill('wc-location', p.location);
+  showPF('pf-welcome');
+
+  prefill('rem-format', formatLabel(p.format, p.location));
+  prefill('rem-location', p.location);
+  showPF('pf-reminder');
+
+  prefill('inv-method', p.paymentMethod);
+  prefill('inv-due', p.paymentDue ? `within ${p.paymentDue}` : '');
+  prefill('inv-details', p.bank);
+  showPF('pf-invoice');
+
+  prefill('miss-method', p.paymentMethod);
+  prefill('miss-details', p.bank);
+  showPF('pf-missed');
+
+  prefill('fee-current', p.fee);
+  showPF('pf-feeincrease');
+
+  prefill('can-notice', p.cancelNotice);
+  prefill('can-charge', p.cancelCharge);
+  prefill('can-exceptions', p.cancelExceptions);
+  showPF('pf-cancellation');
+
+  prefill('late-method', p.bank ? `${p.paymentMethod} — ${p.bank}` : p.paymentMethod);
+  showPF('pf-latepayment');
+
+  showPF('pf-screening');
+}
+
+function prefill(id, val) {
+  if (!val) return;
+  const el = document.getElementById(id);
+  if (el) { el.value = val; el.classList.add('prefilled'); }
+}
+
+function showPF(id) {
+  const el = document.getElementById(id);
+  if (el) el.classList.add('visible');
+}
+
+function formatLabel(format, location) {
+  if (format === 'online') return location ? `Online via ${location}` : 'Online';
+  if (format === 'inperson') return location ? `In person — ${location}` : 'In person';
+  return location || 'Online or in person';
+}
+
+// ══════════════════════════════════════════
+// TONE
+// ══════════════════════════════════════════
+const toneState = {};
+function selectTone(group, value) {
+  toneState[group] = value;
+  document.querySelectorAll(`#tone-${group} .tone-btn`).forEach(b => b.classList.remove('selected'));
+  event.target.classList.add('selected');
+}
+function getTone(group) { return toneState[group] || 'warm'; }
+
+// ══════════════════════════════════════════
+// NAVIGATION
+// ══════════════════════════════════════════
+function showWelcome() {
+  document.querySelectorAll('.tool-panel').forEach(p => p.classList.remove('visible'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('screen-welcome').style.display = 'block';
+  window.scrollTo(0,0);
+}
+
+function showTool(id) {
+  document.getElementById('screen-welcome').style.display = 'none';
+  document.querySelectorAll('.tool-panel').forEach(p => p.classList.remove('visible'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  const panel = document.getElementById(`tool-${id}`);
+  if (panel) panel.classList.add('visible');
+  const navItem = document.getElementById(`nav-${id}`);
+  if (navItem) navItem.classList.add('active');
+  window.scrollTo(0,0);
+}
+
+// ══════════════════════════════════════════
+// FIELD HELPER
+// ══════════════════════════════════════════
+function val(id) {
+  const el = document.getElementById(id);
+  return el ? el.value.trim() : '';
+}
+
+// ══════════════════════════════════════════
+// PROMPTS
+// ══════════════════════════════════════════
+function buildPrompt(type) {
+  const p = getP();
+  const name = p.name || 'the therapist';
+  const practice = p.practice ? ` at ${p.practice}` : '';
+  const signoff = p.signoff || `Kind regards, ${name}`;
+  const approach = p.approach ? `Therapeutic approach: ${p.approach}.` : '';
+  const specialism = p.specialism ? `They specialise in: ${p.specialism}.` : '';
+  const voice = p.voice ? `Voice and tone guidance from the therapist: "${p.voice}".` : '';
+  const cancelPolicy = p.cancelNotice ? `Cancellation policy: ${p.cancelNotice} notice required; ${p.cancelCharge}.` : '';
+
+  const base = `You are helping a private practice therapist named ${name}${practice} write a professional, warm, human email.
+${approach} ${specialism} ${voice}
+Write ONLY the email body — no preamble, no explanation, no subject line.
+Use plain paragraphs. No bullet points unless truly necessary. Concise but warm.
+Do not use hollow filler phrases like "I hope this email finds you well" or "I wanted to reach out."
+End with exactly this sign-off on its own line: ${signoff}
+
+`;
+
+  switch(type) {
+
+    
+    case 'available': return base +
+`Write an enquiry response email confirming availability for a new therapy client.
+Enquirer name: ${val('avail-name') || 'the enquirer'}
+What they're seeking help with: ${val('avail-issue') || 'therapy'}
+Therapist available times: ${val('avail-times') || 'to be discussed'}
+Session fee: ${val('avail-fee') || 'to be discussed'}
+Session length: ${p.length || '50 minutes'}
+Screening call offered: ${p.screening === 'yes' ? 'yes — offer a free 15-minute screening call as the next step' : 'no — invite them to book a first session directly'}
+Tone: ${getTone('avail')}
+Warmly acknowledge their reach-out. Confirm availability, share practical details, and give a clear next step.`;
+
+    case 'noavail': return base +
+`Write an enquiry response email when the therapist is fully booked.
+Enquirer name: ${val('noavail-name') || 'the enquirer'}
+Waitlist situation: ${val('noavail-waitlist')}
+Signposting resources: ${val('noavail-signpost') || 'the BACP directory or their GP'}
+Tone: ${getTone('noavail')}
+Acknowledge their courage in reaching out. Be honest but kind. Signpost clearly. Do not over-apologise.`;
+
+    case 'waitlist': return base +
+`Write an enquiry response offering a place on a therapy waitlist.
+Enquirer name: ${val('wait-name') || 'the enquirer'}
+Estimated availability: ${val('wait-timeframe') || 'not yet known — be gently vague'}
+What they need help with: ${val('wait-issue') || 'not specified'}
+Tone: ${getTone('wait')}
+Keep them warm. Be honest about timelines. Ask if they would like to be added to the waitlist.`;
+
+    case 'screening': return base +
+`Write a screening call confirmation email.
+Client name: ${val('screen-name') || 'the client'}
+Date and time: ${val('screen-datetime') || 'as arranged'}
+Format: ${val('screen-method')}
+Call link or number: ${val('screen-link') || 'to follow / as discussed'}
+Warm, brief, reassuring. Confirm details clearly. Mention no preparation needed.`;
+
+    case 'welcome': return base +
+`Write a welcome email for a client booking their first therapy session.
+Client name: ${val('wc-name') || 'the client'}
+First session: ${val('wc-date') || 'as arranged'}
+Format: ${val('wc-format') || formatLabel(p.format, p.location)}
+Location or link: ${val('wc-location') || p.location || 'to be shared separately'}
+Extra info: ${val('wc-notes') || 'none'}
+${cancelPolicy}
+Warm and grounding. They may feel nervous. Reassure gently. Mention cancellation policy briefly if set.`;
+
+    case 'reminder': return base +
+`Write a session reminder email.
+Client name: ${val('rem-name') || 'the client'}
+Session: ${val('rem-date') || 'as arranged'}
+Format: ${val('rem-format') || formatLabel(p.format, p.location)}
+Location or link: ${val('rem-location') || p.location || 'as previously shared'}
+Extra: ${val('rem-extra') || 'none'}
+${cancelPolicy}
+Brief and friendly. Mention cancellation notice period if set.`;
+
+    case 'invoice': return base +
+`Write an invoice and payment request email.
+Client name: ${val('inv-name') || 'the client'}
+Amount: ${val('inv-amount') || 'as per invoice'}
+Payment method: ${val('inv-method') || p.paymentMethod || 'as previously discussed'}
+Due: ${val('inv-due') || (p.paymentDue ? 'within ' + p.paymentDue : 'within 7 days')}
+Payment details: ${val('inv-details') || p.bank || 'as previously shared'}
+Professional but not cold. Make it easy to pay.`;
+
+    case 'missed': return base +
+`Write a missed payment follow-up email.
+Client name: ${val('miss-name') || 'the client'}
+Amount outstanding: ${val('miss-amount') || 'the outstanding balance'}
+How overdue: ${val('miss-overdue')}
+Payment method: ${val('miss-method') || p.paymentMethod || 'as previously discussed'}
+Payment details: ${val('miss-details') || p.bank || 'as previously shared'}
+Warm but clear. Do not apologise for chasing. Make it easy to resolve.`;
+
+    case 'offboard': return base +
+`Write an end-of-therapy email.
+Client name: ${val('off-name') || 'the client'}
+How therapy is ending: ${val('off-reason')}
+Things to acknowledge: ${val('off-notes') || 'their work in therapy and the journey they have taken'}
+Mention returning: ${val('off-return') || 'do not mention returning'}
+Genuine and warm. Honour the relationship without being formulaic.`;
+
+    case 'feeincrease': return base +
+`Write a fee increase letter to a therapy client.
+Client name: ${val('fee-name') || '[Client name]'}
+Current fee: ${val('fee-current') || p.fee || 'current fee'}
+New fee: ${val('fee-new') || 'new fee'}
+Effective from: ${val('fee-date') || 'date to be specified'}
+Notice given: ${val('fee-notice') || 'appropriate notice'}
+Reason: ${val('fee-reason') || 'no reason — simply announce as a scheduled annual review'}
+Clear and matter-of-fact. No need to over-justify or apologise. Brief, professional, warm.`;
+
+    case 'boundary': return base +
+`Write an email setting a professional boundary with a therapy client.
+Client name: ${val('bnd-name') || 'the client'}
+Boundary type: ${val('bnd-type')}
+Situation: ${val('bnd-situation') || 'as described by the boundary type above'}
+Tone: ${getTone('bnd')}
+${cancelPolicy}
+Warm but unambiguous. Hold the boundary clearly without over-apologising.`;
+
+    case 'cancellation': return base +
+`Write a ${getTone('can') === 'email' ? 'client-facing email introducing the cancellation policy' : 'standalone cancellation policy document'}.
+Notice required: ${val('can-notice') || p.cancelNotice || '48 hours'}
+Late cancellation charge: ${val('can-charge') || p.cancelCharge || 'full session fee'}
+Exceptions: ${val('can-exceptions') || p.cancelExceptions || 'none'}
+Clear and fair — not punitive in tone. Professional but human.`;
+
+    case 'referral': return base +
+`Write a referral email directing a client to other support.
+Client name: ${val('ref-name') || 'the client'}
+Stage: ${val('ref-stage')}
+Reason (internal — do not state bluntly): ${val('ref-reason')}
+Resources: ${val('ref-resources') || 'their GP or the BACP therapist directory'}
+Kind and focused on their needs. Do not make them feel rejected.`;
+
+    case 'latepayment': return base +
+`Write a firm payment escalation email.
+Client name: ${val('late-name') || 'the client'}
+Amount outstanding: ${val('late-amount') || 'the outstanding balance'}
+How long outstanding: ${val('late-duration')}
+Prior follow-up: ${val('late-prior')}
+Payment details: ${val('late-method') || p.bank || 'as previously shared'}
+Deadline: ${val('late-deadline') || 'as soon as possible'}
+Professional and direct. Not rude but not apologetic. Clear about the deadline.`;
+
+    default: return base + 'Write a professional email for a therapist in private practice.';
+  }
+}
+
+// GENERATE
+async function generate(type) {
+  const btnText = document.getElementById(`btn-${type}-text`);
+  const spin    = document.getElementById(`btn-${type}-spin`);
+  const outSec  = document.getElementById(`out-${type}`);
+  const outBox  = document.getElementById(`outbox-${type}`);
+  const labels  = { feeincrease: 'Generate letter', cancellation: 'Generate policy' };
+
+  btnText.textContent = 'Generating…';
+  spin.style.display = 'inline-block';
+  outSec.classList.add('visible');
+  outBox.classList.add('loading');
+  outBox.textContent = 'Writing your email…';
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': 'YOUR_API_KEY_HERE',
+        'anthropic-version': '2023-06-01'
+      },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1000,
+        messages: [{ role: 'user', content: buildPrompt(type) }]
+      })
+    });
+    const data = await res.json();
+    const text = data.content?.[0]?.text || 'Something went wrong — please try again.';
+    outBox.classList.remove('loading');
+    outBox.textContent = text;
+  } catch(err) {
+    outBox.classList.remove('loading');
+    outBox.textContent = 'Unable to connect. Please check your connection and try again.';
+  }
+
+  btnText.textContent = labels[type] || 'Generate email';
+  spin.style.display = 'none';
+}
+
+// COPY
+function copyOutput(type) {
+  const text = document.getElementById(`outbox-${type}`).textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    const c = document.getElementById(`copied-${type}`);
+    c.style.display = 'flex';
+    setTimeout(() => c.style.display = 'none', 2500);
+  });
+}
+
+// INIT
+document.addEventListener('DOMContentLoaded', () => {
+  const p = loadProfile();
+  if (!p.name) {
+    setTimeout(() => openSetup(false), 600);
+  } else {
+    applyProfileToApp();
+  }
+});
+</script>
+</body>
+</html>
